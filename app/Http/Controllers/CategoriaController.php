@@ -22,6 +22,18 @@ class CategoriaController extends Controller
                               ->ordenadas()
                               ->paginate(15);
 
+        // Log para depuração
+        \Log::info('Categorias carregadas:', [
+            'total' => $categorias->total(),
+            'denuncias_count' => $categorias->map(function($categoria) {
+                return [
+                    'categoria_id' => $categoria->id,
+                    'nome' => $categoria->nome,
+                    'denuncias_count' => $categoria->denuncias_count
+                ];
+            })
+        ]);
+
         return view('categorias.index', compact('categorias'));
     }
 

@@ -81,22 +81,22 @@
                                                 onclick="editarCategoria(<?php echo e($categoria->id); ?>)">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <?php if($categoria->denuncias_count == 0): ?>
-                                            <form action="<?php echo e(route('categorias.destroy', $categoria)); ?>" method="POST" 
-                                                  style="display: inline;" 
-                                                  onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?')">
-                                                <?php echo csrf_field(); ?>
-                                                <?php echo method_field('DELETE'); ?>
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        <?php else: ?>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" disabled 
-                                                    title="Não é possível excluir categoria com denúncias">
+                                        <?php
+                                            // Verifica se existem denúncias diretamente no banco de dados
+                                            $temDenuncias = $categoria->denuncias()->exists();
+                                        ?>
+                                        
+                                        <form action="<?php echo e(route('categorias.destroy', $categoria)); ?>" method="POST" class="d-inline">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
+                                            <button type="button" 
+                                                    class="btn btn-sm <?php echo e($temDenuncias ? 'btn-outline-secondary' : 'btn-outline-danger'); ?>" 
+                                                    title="<?php echo e($temDenuncias ? 'Não é possível excluir categoria com denúncias' : 'Excluir categoria'); ?>"
+                                                    onclick="<?php echo e($temDenuncias ? '' : "if(confirm('Tem certeza que deseja excluir esta categoria?')) { this.form.submit(); }"); ?>"
+                                                    <?php echo e($temDenuncias ? 'disabled' : ''); ?>>
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                        <?php endif; ?>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

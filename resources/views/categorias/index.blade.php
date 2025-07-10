@@ -80,22 +80,22 @@
                                                 onclick="editarCategoria({{ $categoria->id }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        @if($categoria->denuncias_count == 0)
-                                            <form action="{{ route('categorias.destroy', $categoria) }}" method="POST" 
-                                                  style="display: inline;" 
-                                                  onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        @else
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" disabled 
-                                                    title="Não é possível excluir categoria com denúncias">
+                                        @php
+                                            // Verifica se existem denúncias diretamente no banco de dados
+                                            $temDenuncias = $categoria->denuncias()->exists();
+                                        @endphp
+                                        
+                                        <form action="{{ route('categorias.destroy', $categoria) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" 
+                                                    class="btn btn-sm {{ $temDenuncias ? 'btn-outline-secondary' : 'btn-outline-danger' }}" 
+                                                    title="{{ $temDenuncias ? 'Não é possível excluir categoria com denúncias' : 'Excluir categoria' }}"
+                                                    onclick="{{ $temDenuncias ? '' : "if(confirm('Tem certeza que deseja excluir esta categoria?')) { this.form.submit(); }" }}"
+                                                    {{ $temDenuncias ? 'disabled' : '' }}>
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                        @endif
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
