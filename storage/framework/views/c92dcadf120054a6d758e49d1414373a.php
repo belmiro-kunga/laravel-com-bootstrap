@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?php echo e(\App\Helpers\ConfigHelper::get('site_description', 'Sistema de Denúncias Seguro e Confiável')); ?>">
-    <title><?php echo e(\App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias')); ?></title>
+    <title><?php echo e(\App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias')); ?>"></title>
 
     <!-- Favicon -->
     <link rel="icon" href="<?php echo e(\App\Helpers\ConfigHelper::get('favicon_url', asset('favicon.ico'))); ?>" type="image/x-icon">
@@ -12,433 +12,759 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <!-- Animate on Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <!-- Custom CSS -->
+
     <style>
+        /* Variáveis CSS para cores e sombras */
         :root {
-            --primary-color: #3a5f8d;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --light-color: #f8f9fa;
-            --dark-color: #2c3e50;
-            --text-color: #333;
-            --text-light: #6c757d;
-            --transition: all 0.3s ease;
+            --primary-color: #0056b3; /* Azul mais escuro para botões e detalhes */
+            --secondary-color: #007bff; /* Azul padrão */
+            --light-bg: #f8f9fa; /* Fundo claro */
+            --dark-text: #343a40; /* Texto escuro */
+            --light-text: #6c757d; /* Texto mais claro */
+            --white: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
-            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            --gradient-primary: linear-gradient(135deg, #3a5f8d 0%, #2c3e50 100%);
         }
 
+        /* Estilos globais do corpo */
         body {
             font-family: 'Poppins', sans-serif;
-            color: var(--text-color);
-            line-height: 1.7;
-            overflow-x: hidden;
-            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden; /* Evita rolagem horizontal */
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            color: var(--dark-color);
+        /* Contêiner central para conteúdo */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
         }
 
-        /* Header & Navigation */
-        .navbar {
-            background-color: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        /* --- Cabeçalho (Header) --- */
+        .header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px var(--shadow);
             padding: 15px 0;
-            transition: var(--transition);
-            position: fixed;
-            width: 100%;
+            position: sticky;
             top: 0;
             z-index: 1000;
+            transition: all 0.3s ease; /* Transição para efeito de rolagem */
         }
 
-        .navbar.scrolled {
+        .header.scrolled {
             padding: 10px 0;
-            background-color: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 5px var(--shadow);
         }
 
-        .navbar-brand img {
-            height: 50px;
-            transition: var(--transition);
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .navbar-nav .nav-item {
-            margin: 0 8px;
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
         }
-        
-        .nav-link {
-            font-weight: 500;
-            color: var(--dark-color);
-            padding: 8px 15px !important;
+
+        .logo img {
+            height: 40px; /* Tamanho do logo */
+            margin-right: 10px;
             border-radius: var(--border-radius);
-            transition: var(--transition);
-            position: relative;
-            font-size: 15px;
         }
 
-        .nav-link::after {
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-button {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px var(--shadow);
+        }
+
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* --- Seção Hero --- */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: var(--white);
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
             content: '';
             position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--accent-color);
-            transition: var(--transition);
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: bubble 15s infinite ease-in-out;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -70px;
+            right: -70px;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: bubble 18s infinite reverse ease-in-out;
+        }
+
+        @keyframes bubble {
+            0% { transform: scale(0.8) translate(0, 0); opacity: 0.8; }
+            50% { transform: scale(1.2) translate(20px, -20px); opacity: 0.6; }
+            100% { transform: scale(0.8) translate(0, 0); opacity: 0.8; }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons .button {
+            background-color: var(--white);
             color: var(--primary-color);
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 70%;
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
+            padding: 15px 30px;
             border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(58, 95, 141, 0.3);
-            font-size: 0.9rem;
+            font-size: 1.1rem;
+            margin: 0 10px;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-primary:hover {
+        .hero-buttons .button:hover {
+            background-color: var(--light-bg);
+            color: var(--secondary-color);
             transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(58, 95, 141, 0.4);
-            background: var(--secondary-color);
         }
 
-        .btn-outline-primary {
-            border: 2px solid var(--primary-color);
+        /* --- Seção de Recursos (Features) --- */
+        .features {
+            padding: 80px 0;
+            background-color: var(--white);
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 60px;
             color: var(--primary-color);
-            font-weight: 600;
-            padding: 10px 25px;
-            border-radius: 50px;
-            transition: var(--transition);
-            background: transparent;
+            font-weight: 700;
         }
 
-        .btn-outline-primary:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(58, 95, 141, 0.3);
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
         }
 
         .feature-card {
-            background: #fff;
-            border: none;
-            border-radius: 15px;
+            background-color: var(--light-bg);
             padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px var(--shadow);
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,.08);
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e0e0e0;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,.12);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
-        .feature-icon {
+        .feature-card .icon {
             font-size: 3rem;
-            color: var(--bs-link-color);
+            color: var(--secondary-color);
             margin-bottom: 20px;
         }
 
-        .cta-section {
-            background-color: #3c506e;
-            color: #fff;
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
         }
-        
-        .cta-section .btn-light {
+
+        .feature-card p {
+            color: var(--light-text);
+        }
+
+        /* --- Seção "Como Funciona" --- */
+        .how-it-works {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .how-it-works h2 {
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .step-item {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px var(--shadow);
+            text-align: left;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .step-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .step-item .step-number {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--secondary-color);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .step-item h3 {
+            font-size: 1.6rem;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .step-item p {
+            color: var(--light-text);
+        }
+
+        .tracking-section {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px var(--shadow);
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #e0e0e0;
+        }
+
+        .tracking-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--primary-color);
             font-weight: 600;
         }
 
-        .footer {
-            background-color: #343a40;
-            color: #fff;
-            padding: 40px 0;
+        .tracking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        
-        .footer a {
-            color: #adb5bd;
+
+        .tracking-form input[type="text"] {
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+        }
+
+        .tracking-form .button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .tracking-form .button:hover {
+            background-color: #004085;
+            transform: translateY(-2px);
+        }
+
+        /* --- Seção de Chamada para Ação (CTA) --- */
+        .cta {
+            background: linear-gradient(45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .cta p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons .button {
+            background-color: var(--white);
+            color: var(--primary-color);
+            padding: 18px 35px;
+            border: none;
+            border-radius: var(--border-radius);
             text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0 15px;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        
-        .footer a:hover {
-            color: #fff;
+
+        .cta-buttons .button:hover {
+            background-color: var(--light-bg);
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* --- Rodapé --- */
+        .footer {
+            background-color: var(--dark-text);
+            color: var(--white);
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* --- Contador Animado (Estilo) --- */
+        .counter-section {
+            padding: 60px 0;
+            background-color: var(--light-bg);
+            text-align: center;
+        }
+
+        .counter-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .counter-item {
+            display: inline-block;
+            margin: 0 30px;
+            text-align: center;
+        }
+
+        .counter-value {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .counter-label {
+            font-size: 1.2rem;
+            color: var(--dark-text);
+            font-weight: 500;
+        }
+
+        /* --- Responsividade --- */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            .hero p {
+                font-size: 1.1rem;
+            }
+            .nav-menu {
+                gap: 15px;
+            }
+            .nav-button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+            .nav-button {
+                width: 100%;
+                text-align: center;
+            }
+            .hero {
+                padding: 80px 0;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            .hero-buttons .button {
+                margin: 0;
+                width: 100%;
+            }
+            .features, .how-it-works, .cta {
+                padding: 60px 0;
+            }
+            .features h2, .how-it-works h2, .cta h2 {
+                font-size: 2rem;
+                margin-bottom: 40px;
+            }
+            .feature-cards, .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            .step-item .step-number {
+                position: static;
+                transform: none;
+                margin: 0 auto 20px;
+            }
+            .tracking-section {
+                padding: 30px;
+            }
+            .cta h2 {
+                font-size: 2.5rem;
+            }
+            .cta p {
+                font-size: 1.1rem;
+            }
+            .cta-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            .cta-buttons .button {
+                margin: 0;
+                width: 100%;
+            }
+            .counter-item {
+                margin: 0 15px;
+            }
+            .counter-value {
+                font-size: 3rem;
+            }
+            .counter-label {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+            .logo img {
+                height: 30px;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .hero p {
+                font-size: 0.9rem;
+            }
+            .features h2, .how-it-works h2, .cta h2 {
+                font-size: 1.8rem;
+            }
+            .feature-card h3 {
+                font-size: 1.3rem;
+            }
+            .step-item h3 {
+                font-size: 1.4rem;
+            }
+            .tracking-section h3 {
+                font-size: 1.5rem;
+            }
+            .counter-value {
+                font-size: 2.5rem;
+            }
+            .counter-label {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="<?php echo e(url('/')); ?>">
-                <img src="<?php echo e(\App\Helpers\ConfigHelper::get('logo_url', asset('img/logo-white.png'))); ?>" alt="<?php echo e(\App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias')); ?>" height="40" class="me-2">
+    <!-- Cabeçalho (Header) -->
+    <header class="header" id="main-header">
+        <div class="container header-content">
+            <a href="<?php echo e(url('/')); ?>" class="logo">
+                <img src="<?php echo e(\App\Helpers\ConfigHelper::get('logo_url', asset('images/logo.png'))); ?>" alt="Logo do Sistema">
                 <?php echo e(\App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias')); ?>
 
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-3">
-                        <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="btn btn-outline-light">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Fazer Denúncia
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo e(route('rastreamento.publico')); ?>" class="btn btn-light text-primary">
-                            <i class="fas fa-search-location me-2"></i>Rastrear Denúncia
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <nav class="nav-menu">
+                <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="nav-button">Fazer Denúncia</a>
+                <a href="<?php echo e(route('rastreamento.publico')); ?>" class="nav-button">Rastrear Denúncia</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <!-- Hero Section -->
-    <section class="py-5" style="background: linear-gradient(135deg, #3a5f8d 0%, #2c3e50 100%); color: #fff;">
-        <div class="container py-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
-                    <h1 class="display-4 fw-bold mb-4">Faça sua <span class="text-warning">denúncia</span> de forma segura e anônima</h1>
-                    <p class="lead mb-4">Proteja sua comunidade com nosso sistema de denúncias online. Rápido, seguro e totalmente sigiloso.</p>
-                    <div class="d-flex flex-wrap gap-3">
-                        <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="btn btn-warning btn-lg px-4">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Fazer Denúncia
-                        </a>
-                        <a href="<?php echo e(route('rastreamento.publico')); ?>" class="btn btn-outline-light btn-lg px-4">
-                            <i class="fas fa-search-location me-2"></i>Rastrear Denúncia
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <img src="https://images.unsplash.com/photo-1581094794329-c811e9f8dd53?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" 
-                         alt="Sistema de Denúncias" 
-                         class="img-fluid rounded-3 shadow-lg">
-                </div>
+    <!-- Seção Hero -->
+    <section class="hero">
+        <div class="container" data-aos="fade-up" data-aos-duration="1000">
+            <h1>Sua Voz, Nossa Prioridade. Denuncie com Segurança.</h1>
+            <p>Um ambiente seguro e confidencial para você relatar irregularidades, garantindo que sua denúncia seja ouvida e tratada com a seriedade que merece.</p>
+            <div class="hero-buttons">
+                <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="button">Fazer uma Denúncia Agora</a>
+                <a href="<?php echo e(route('rastreamento.publico')); ?>" class="button">Rastrear Minha Denúncia</a>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="py-5 bg-light">
-        <div class="container py-5">
-            <div class="row g-4">
-                <div class="col-md-4" data-aos="fade-up">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <div class="feature-icon mb-3">
-                                <i class="fas fa-user-shield"></i>
-                            </div>
-                            <h3 class="h4 mb-3">Anonimato Garantido</h3>
-                            <p class="text-muted">Sua identidade será mantida em sigilo total. Ninguém saberá que foi você quem fez a denúncia.</p>
-                        </div>
-                    </div>
+    <!-- Seção de Recursos (Features) -->
+    <section class="features">
+        <div class="container">
+            <h2 data-aos="fade-up">Por Que Escolher Nosso Sistema?</h2>
+            <div class="feature-cards">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="icon">🔒</div>
+                    <h3>Anonimato Garantido</h3>
+                    <p>Sua identidade é protegida. Você pode denunciar com total confiança, sem medo de retaliações.</p>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <div class="feature-icon mb-3">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                            <h3 class="h4 mb-3">Segurança Máxima</h3>
-                            <p class="text-muted">Utilizamos criptografia avançada para proteger todas as informações fornecidas.</p>
-                        </div>
-                    </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="icon">🛡️</div>
+                    <h3>Segurança Máxima</h3>
+                    <p>Utilizamos tecnologia de ponta para proteger seus dados e informações, garantindo a integridade da sua denúncia.</p>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <div class="feature-icon mb-3">
-                                <i class="fas fa-mobile-alt"></i>
-                            </div>
-                            <h3 class="h4 mb-3">Acesso Fácil</h3>
-                            <p class="text-muted">Faça denúncias de qualquer dispositivo, a qualquer momento. Totalmente responsivo e fácil de usar.</p>
-                        </div>
-                    </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="icon">🚀</div>
+                    <h3>Acesso Fácil</h3>
+                    <p>Interface intuitiva e acessível de qualquer dispositivo, tornando o processo de denúncia simples e rápido.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section class="py-5">
-        <div class="container py-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
-                    <h2 class="fw-bold mb-4">Como funciona</h2>
-                    <div class="d-flex mb-4">
-                        <div class="me-4">
-                            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem; font-weight: bold;">1</div>
-                        </div>
-                        <div>
-                            <h4 class="h5">Preencha o formulário</h4>
-                            <p class="text-muted mb-0">Forneça os detalhes da ocorrência de forma clara e objetiva.</p>
-                        </div>
-                    </div>
-                    <div class="d-flex mb-4">
-                        <div class="me-4">
-                            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem; font-weight: bold;">2</div>
-                        </div>
-                        <div>
-                            <h4 class="h5">Receba o número de protocolo</h4>
-                            <p class="text-muted mb-0">Anote o número para acompanhar o andamento da sua denúncia.</p>
-                        </div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="me-4">
-                            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem; font-weight: bold;">3</div>
-                        </div>
-                        <div>
-                            <h4 class="h5">Acompanhe o andamento</h4>
-                            <p class="text-muted mb-0">Use o número do protocolo para verificar o status da sua denúncia.</p>
-                        </div>
-                    </div>
+    <!-- Seção "Como Funciona" -->
+    <section class="how-it-works" id="fazer-denuncia">
+        <div class="container">
+            <h2 data-aos="fade-up">Como Funciona o Processo de Denúncia?</h2>
+            <div class="steps-grid">
+                <div class="step-item" data-aos="fade-right">
+                    <div class="step-number">1</div>
+                    <h3>Preencha o Formulário</h3>
+                    <p>Descreva a situação em detalhes no nosso formulário seguro. Quanto mais informações, melhor.</p>
                 </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h3 class="h4 mb-4">Acompanhe sua denúncia</h3>
-                            <form action="<?php echo e(route('rastreamento.publico')); ?>" method="GET">
-                                <div class="mb-3">
-                                    <label for="protocolo" class="form-label">Número do Protocolo</label>
-                                    <input type="text" class="form-control form-control-lg" id="protocolo" name="protocolo" placeholder="Digite o número do protocolo" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search me-2"></i> Acompanhar Denúncia
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                <div class="step-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-number">2</div>
+                    <h3>Receba o Protocolo</h3>
+                    <p>Após o envio, você receberá um número de protocolo único para acompanhar o status da sua denúncia.</p>
                 </div>
+                <div class="step-item" data-aos="fade-left" data-aos-delay="200">
+                    <div class="step-number">3</div>
+                    <h3>Acompanhe o Andamento</h3>
+                    <p>Use seu protocolo para rastrear a denúncia e ver as ações tomadas pela nossa equipe.</p>
+                </div>
+            </div>
+
+            <div class="tracking-section" id="rastrear-denuncia" data-aos="fade-up" data-aos-delay="300">
+                <h3>Rastreie Sua Denúncia</h3>
+                <p>Insira o número do protocolo que você recebeu para verificar o status da sua denúncia.</p>
+                <form class="tracking-form" action="<?php echo e(route('rastreamento.publico')); ?>" method="GET">
+                    <input type="text" id="tracking-code" name="protocolo" placeholder="Digite seu número de protocolo" required>
+                    <button type="submit" class="button">Rastrear Denúncia</button>
+                </form>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="py-5 cta-section">
-        <div class="container text-center">
-            <h2 class="mb-4">Pronto para fazer a diferença?</h2>
-            <p class="lead mb-4">Use nossos canais para registrar sua denúncia ou acompanhar um caso existente.</p>
-            <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="btn btn-light btn-lg me-2">
-                <i class="fas fa-bullhorn me-2"></i> Fazer Denúncia
-            </a>
-            <a href="<?php echo e(route('rastreamento.publico')); ?>" class="btn btn-outline-light btn-lg">
-                <i class="fas fa-search me-2"></i> Rastrear Denúncia
-            </a>
+    <!-- Seção de Contador Animado -->
+    <section class="counter-section">
+        <div class="container">
+            <h2 data-aos="fade-up">Nosso Impacto em Números</h2>
+            <div class="counter-item" data-aos="fade-up" data-aos-delay="100">
+                <span class="counter-value" data-target="1500">0</span>
+                <span class="counter-label">Denúncias Recebidas</span>
+            </div>
+            <div class="counter-item" data-aos="fade-up" data-aos-delay="200">
+                <span class="counter-value" data-target="98">0</span>
+                <span class="counter-label">% de Resolução</span>
+            </div>
+            <div class="counter-item" data-aos="fade-up" data-aos-delay="300">
+                <span class="counter-value" data-target="500">0</span>
+                <span class="counter-label">Casos Concluídos</span>
+            </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Seção de Chamada para Ação (CTA) -->
+    <section class="cta">
+        <div class="container" data-aos="zoom-in">
+            <h2>Faça a Diferença. Denuncie Agora!</h2>
+            <p>Sua coragem em denunciar é fundamental para construir um ambiente mais justo e transparente para todos.</p>
+            <div class="cta-buttons">
+                <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="button">Iniciar Nova Denúncia</a>
+                <a href="<?php echo e(route('rastreamento.publico')); ?>" class="button">Verificar Status</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
     <footer class="footer">
-        <div class="container text-center">
+        <div class="container">
             <p>&copy; <?php echo e(date('Y')); ?> <?php echo e(\App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias')); ?>. Todos os direitos reservados.</p>
-            <p>
-                <a href="#">Política de Privacidade</a> | 
+            <div class="footer-links">
+                <a href="#">Política de Privacidade</a>
                 <a href="#">Termos de Uso</a>
-            </p>
+                <a href="#">Contato</a>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- AOS JS -->
+    <!-- Scripts JavaScript -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <!-- Custom JS -->
     <script>
-        // Initialize AOS
+        // Inicializa AOS (Animate On Scroll)
         AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
+            once: true, // Animações acontecem apenas uma vez
+            duration: 800, // Duração da animação em ms
+            easing: 'ease-out-quad', // Tipo de easing
         });
 
-        // Navbar scroll effect
-        const navbar = document.querySelector('.navbar');
-        window.addEventListener('scroll', () => {
+        // Efeito de rolagem no cabeçalho
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
             if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
+                header.classList.add('scrolled');
             } else {
-                navbar.classList.remove('scrolled');
+                header.classList.remove('scrolled');
             }
         });
 
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        // Navegação suave (smooth scroll)
+        document.querySelectorAll('.scroll-link').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    window.scrollTo({
-                        top: target.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
             });
         });
 
-        // Counter animation
-        const counters = document.querySelectorAll('.counter');
-        const speed = 200;
-        
-        const animateCounters = () => {
-            counters.forEach(counter => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText;
+        // Contador animado
+        const counters = document.querySelectorAll('.counter-value');
+        const speed = 200; // Quanto maior, mais lento
+
+        const animateCounter = (counter) => {
+            const target = +counter.getAttribute('data-target');
+            let count = 0;
+            const updateCount = () => {
                 const increment = target / speed;
-                
                 if (count < target) {
-                    counter.innerText = Math.ceil(count + increment);
-                    setTimeout(animateCounters, 1);
+                    count = Math.ceil(count + increment);
+                    counter.innerText = count;
+                    setTimeout(updateCount, 1);
                 } else {
                     counter.innerText = target;
                 }
-            });
+            };
+            updateCount();
         };
 
-        // Start counter when element is in viewport
-        const counterSection = document.querySelector('.stats-section');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-
+        // Observador de Interseção para iniciar o contador quando visível
+        const counterSection = document.querySelector('.counter-section');
         if (counterSection) {
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        counters.forEach(animateCounter);
+                        observer.unobserve(entry.target); // Para de observar depois de animar
+                    }
+                });
+            }, { threshold: 0.5 }); // Inicia quando 50% da seção está visível
+
             observer.observe(counterSection);
         }
     </script>
