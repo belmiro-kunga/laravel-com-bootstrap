@@ -7,13 +7,108 @@ use App\Models\Categoria;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\NotificationService;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DenunciaController extends Controller
 {
+    /**
+     * Exibe o formulário público de denúncias.
+     */
+    public function formularioPublico()
+    {
+        $categorias = Categoria::where('ativo', true)->orderBy('nome')->get();
+        return view('denuncias.formulario-publico', compact('categorias'));
+    }
+
+    /**
+     * Salva uma denúncia enviada pelo formulário público.
+     */
+    public function salvarPublica(Request $request)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'categoria_id' => 'required|exists:categorias,id',
+            'nome_denunciante' => 'nullable|string|max:255',
+            'email_denunciante' => 'nullable|email|max:255',
+            'telefone_denunciante' => 'nullable|string|max:20',
+            'local_ocorrencia' => 'required|string|max:500',
+            'data_ocorrencia' => 'required|date',
+            'evidencias.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Gerar protocolo único
+            $protocolo = 'DEN-' . strtoupper(Str::random(8));
+            
+            // Criar a denúncia
+            $denuncia = new Denuncia([
+                'titulo' => $request->titulo,
+                'descricao' => $request->descricao,
+                'categoria_id' => $request->categoria_id,
+                'status_id' => 1, // Status inicial (Aberto)
+                'prioridade' => 'media',
+                'protocolo' => $protocolo,
+                'nome_denunciante' => $request->nome_denunciante,
+                'email_denunciante' => $request->email_denunciante,
+                'telefone_denunciante' => $request->telefone_denunciante,
+                'local_ocorrencia' => $request->local_ocorrencia,
+                'data_ocorrencia' => $request->data_ocorrencia,
+                'ip_denunciante' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            // Se o usuário estiver autenticado, associar a ele
+            if (Auth::check()) {
+                $denuncia->user_id = Auth::id();
+            }
+
+            $denuncia->save();
+
+            // Processar anexos
+            if ($request->hasFile('evidencias')) {
+                foreach ($request->file('evidencias') as $file) {
+                    $path = $file->store('evidencias', 'public');
+                    
+                    $denuncia->evidencias()->create([
+                        'nome_arquivo' => $file->getClientOriginalName(),
+                        'caminho_arquivo' => $path,
+                        'tipo_mime' => $file->getClientMimeType(),
+                        'tamanho' => $file->getSize(),
+                        'publico' => false,
+                    ]);
+                }
+            }
+
+            // Registrar auditoria
+            AuditService::logDenunciaCriada($denuncia, 'Denúncia criada através do formulário público');
+
+            // Notificar administradores
+            NotificationService::notificarNovaDenuncia($denuncia);
+
+            DB::commit();
+
+            return redirect()->route('rastreamento.publico')
+                ->with('success', 'Sua denúncia foi registrada com sucesso! Use o número de protocolo para acompanhar: ' . $protocolo)
+                ->with('protocolo', $protocolo);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Erro ao salvar denúncia pública: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            
+            return back()->withInput()->withErrors([
+                'error' => 'Ocorreu um erro ao processar sua denúncia. Por favor, tente novamente mais tarde.'
+            ]);
+        }
+    }
     /**
      * Display a listing of the resource.
      */
@@ -369,147 +464,6 @@ class DenunciaController extends Controller
                            ->with('success', 'Responsável atribuído com sucesso!');
         } catch (\Exception $e) {
             return back()->with('error', 'Erro ao atribuir responsável: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Formulário de denúncia anônima (público)
-     */
-    public function formularioPublico()
-    {
-        $categorias = Categoria::ativas()->ordenadas()->get();
-        return view('denuncias.formulario-publico', compact('categorias'));
-    }
-
-    /**
-     * Salvar denúncia pública
-     */
-    public function salvarPublica(Request $request)
-    {
-        $request->validate([
-            'categoria_id' => 'required|exists:categorias,id',
-            'titulo' => 'required|string|max:200',
-            'descricao' => 'required|string',
-            'local_ocorrencia' => 'nullable|string',
-            'data_ocorrencia' => 'nullable|date',
-            'hora_ocorrencia' => 'nullable|date_format:H:i',
-            'nome_denunciante' => 'nullable|string|max:100',
-            'email_denunciante' => 'nullable|email|max:100',
-            'telefone_denunciante' => 'nullable|string|max:20',
-            'departamento_denunciante' => 'nullable|string|max:100',
-            'envolvidos' => 'nullable|string',
-            'testemunhas' => 'nullable|string',
-            'prioridade' => 'required|in:baixa,media,alta,critica',
-            'comprovativos.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:5120', // 5MB por arquivo
-            'descricao_comprovativos' => 'nullable|string',
-            'tipo_denuncia' => 'required|in:anonima,identificada',
-            'termos' => 'required|accepted',
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            // Determinar se é anônima baseado na escolha do usuário
-            $isAnonima = $request->tipo_denuncia === 'anonima';
-            
-            // Se for identificada, validar campos obrigatórios
-            if (!$isAnonima) {
-                $request->validate([
-                    'nome_denunciante' => 'required|string|max:100',
-                    'email_denunciante' => 'required|email|max:100',
-                ]);
-            }
-
-            $denuncia = Denuncia::create([
-                'categoria_id' => $request->categoria_id,
-                'status_id' => Status::where('nome', 'Recebida')->first()->id,
-                'titulo' => $request->titulo,
-                'descricao' => $request->descricao,
-                'local_ocorrencia' => $request->local_ocorrencia,
-                'data_ocorrencia' => $request->data_ocorrencia,
-                'hora_ocorrencia' => $request->hora_ocorrencia,
-                'nome_denunciante' => $isAnonima ? null : $request->nome_denunciante,
-                'email_denunciante' => $isAnonima ? null : $request->email_denunciante,
-                'telefone_denunciante' => $isAnonima ? null : $request->telefone_denunciante,
-                'departamento_denunciante' => $isAnonima ? null : $request->departamento_denunciante,
-                'envolvidos' => $request->envolvidos,
-                'testemunhas' => $request->testemunhas,
-                'prioridade' => $request->prioridade,
-                'urgente' => false,
-                'ip_denunciante' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
-
-            // Garante que o protocolo foi gerado
-            if (empty($denuncia->protocolo)) {
-                $denuncia->protocolo = $denuncia->gerarProtocolo();
-                $denuncia->save();
-            }
-
-            // Processar comprovativos enviados
-            if ($request->hasFile('comprovativos')) {
-                $comprovativos = $request->file('comprovativos');
-                
-                foreach ($comprovativos as $comprovativo) {
-                    if ($comprovativo->isValid()) {
-                        // Gerar nome único para o arquivo
-                        $nomeArquivo = time() . '_' . uniqid() . '.' . $comprovativo->getClientOriginalExtension();
-                        
-                        // Salvar arquivo
-                        $caminho = $comprovativo->storeAs('comprovativos', $nomeArquivo, 'public');
-                        
-                        // Criar registro de evidência
-                        $denuncia->evidencias()->create([
-                            'user_id' => User::where('email', 'anonymous@system.com')->first()->id ?? 1, // Usuário anônimo
-                            'nome_original' => $comprovativo->getClientOriginalName(),
-                            'nome_arquivo' => $nomeArquivo,
-                            'caminho' => $caminho,
-                            'tipo_mime' => $comprovativo->getClientMimeType(),
-                            'tamanho' => $comprovativo->getSize(),
-                            'extensao' => $comprovativo->getClientOriginalExtension(),
-                            'descricao' => 'Comprovativo enviado pelo denunciante',
-                            'publico' => false, // Comprovativos são privados por padrão
-                        ]);
-                    }
-                }
-                
-                // Adicionar comentário sobre os comprovativos
-                $totalComprovativos = count($request->file('comprovativos'));
-                $comentario = "Denúncia enviada com {$totalComprovativos} comprovativo(s)";
-                
-                if ($request->descricao_comprovativos) {
-                    $comentario .= ". Descrição: " . $request->descricao_comprovativos;
-                }
-                
-                $denuncia->adicionarComentario(
-                    $comentario,
-                    User::where('email', 'anonymous@system.com')->first()->id ?? 1,
-                    'interno'
-                );
-            }
-
-            // Adicionar comentário sobre o tipo de denúncia
-            $tipoComentario = $isAnonima 
-                ? "Denúncia anônima enviada" 
-                : "Denúncia identificada enviada por: {$request->nome_denunciante} ({$request->email_denunciante})";
-            
-            $denuncia->adicionarComentario(
-                $tipoComentario,
-                User::where('email', 'anonymous@system.com')->first()->id ?? 1,
-                'interno'
-            );
-
-            DB::commit();
-
-            // Notificar admins e moderadores sobre nova denúncia
-            NotificationService::notificarNovaDenuncia($denuncia);
-
-            return view('denuncias.confirmacao', compact('denuncia'))
-                           ->with('success', 'Denúncia enviada com sucesso! Protocolo: ' . $denuncia->protocolo);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()->with('error', 'Erro ao enviar denúncia: ' . $e->getMessage());
         }
     }
 }

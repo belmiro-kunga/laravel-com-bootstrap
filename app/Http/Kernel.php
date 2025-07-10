@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'maintenance' => \App\Http\Middleware\MaintenanceMode::class,
         'no-cache' => \App\Http\Middleware\NoCache::class,
+        'public.access' => \App\Http\Middleware\CheckPublicAccess::class,
     ];
 }

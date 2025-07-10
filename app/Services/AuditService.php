@@ -219,4 +219,60 @@ class AuditService
     {
         return self::log($event, $description, $model, null, null, $metadata);
     }
-} 
+
+    /**
+     * Log para rastreamento de denúncia (acesso público)
+     */
+    public static function logRastreamento($denuncia, $ip, $userAgent, $description = null)
+    {
+        $description = $description ?? "Consulta pública à denúncia #{$denuncia->protocolo}";
+        
+        return AuditLog::create([
+            'event' => 'public_tracking',
+            'auditable_type' => get_class($denuncia),
+            'auditable_id' => $denuncia->id,
+            'user_id' => null, // Usuário não autenticado
+            'user_type' => 'public',
+            'ip_address' => $ip,
+            'user_agent' => $userAgent,
+            'old_values' => null,
+            'new_values' => null,
+            'description' => $description,
+            'url' => request()->fullUrl(),
+            'method' => request()->method(),
+            'metadata' => [
+                'protocolo' => $denuncia->protocolo,
+                'status' => $denuncia->status->nome,
+                'categoria' => $denuncia->categoria->nome
+            ]
+        ]);
+    }
+
+    /**
+     * Log para download de PDF de denúncia (acesso público)
+     */
+    public static function logDownloadPDF($denuncia, $ip, $userAgent, $description = null)
+    {
+        $description = $description ?? "Download de PDF da denúncia #{$denuncia->protocolo}";
+        
+        return AuditLog::create([
+            'event' => 'public_pdf_download',
+            'auditable_type' => get_class($denuncia),
+            'auditable_id' => $denuncia->id,
+            'user_id' => null, // Usuário não autenticado
+            'user_type' => 'public',
+            'ip_address' => $ip,
+            'user_agent' => $userAgent,
+            'old_values' => null,
+            'new_values' => null,
+            'description' => $description,
+            'url' => request()->fullUrl(),
+            'method' => request()->method(),
+            'metadata' => [
+                'protocolo' => $denuncia->protocolo,
+                'status' => $denuncia->status->nome,
+                'categoria' => $denuncia->categoria->nome
+            ]
+        ]);
+    }
+}

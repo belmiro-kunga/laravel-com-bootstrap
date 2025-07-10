@@ -338,10 +338,48 @@ class UserController extends Controller
             abort(403, 'Acesso negado.');
         }
 
+        // Obter todas as permissões ativas ordenadas
         $permissions = \App\Models\Permission::active()->ordered()->get();
-        $userPermissions = $user->getGrantedPermissions()->pluck('slug')->toArray();
+        $userPermissions = $user->permissions()->pluck('permission_id')->toArray();
+        
+        // Agrupar permissões por categoria e grupo
+        $groupedPermissions = [];
+        $categories = [];
+        
+        foreach ($permissions as $permission) {
+            $category = $permission->category ?: 'Geral';
+            $group = $permission->group ?: 'Geral';
+            
+            if (!isset($groupedPermissions[$category])) {
+                $groupedPermissions[$category] = [];
+            }
+            
+            if (!isset($groupedPermissions[$category][$group])) {
+                $groupedPermissions[$category][$group] = [];
+            }
+            
+            $groupedPermissions[$category][$group][] = $permission;
+            
+            // Contar permissões por categoria para o filtro
+            if (!isset($categories[$category])) {
+                $categories[$category] = 0;
+            }
+            $categories[$category]++;
+        }
+        
+        // Ordenar categorias e grupos
+        ksort($groupedPermissions);
+        foreach ($groupedPermissions as &$groups) {
+            ksort($groups);
+        }
 
-        return view('users.permissions', compact('user', 'permissions', 'userPermissions'));
+        return view('users.permissions', [
+            'user' => $user,
+            'groupedPermissions' => $groupedPermissions,
+            'userPermissions' => $userPermissions,
+            'categories' => $categories,
+            'totalPermissions' => $permissions->count()
+        ]);
     }
 
     /**
@@ -360,8 +398,41 @@ class UserController extends Controller
 
         try {
             $permissions = $request->input('permissions', []);
-            // Sincronizar permissões usando IDs
-            $user->permissions()->sync($permissions);
+            $currentPermissions = $user->permissions->pluck('id')->toArray();
+            
+            // Identificar permissões adicionadas e removidas
+            $added = array_diff($permissions, $currentPermissions);
+            $removed = array_diff($currentPermissions, $permissions);
+            
+            // Sincronizar permissões com informações adicionais
+            $syncData = [];
+            $now = now();
+            $authUserId = Auth::id();
+            
+            foreach ($permissions as $permissionId) {
+                $syncData[$permissionId] = [
+                    'granted' => true,
+                    'granted_at' => $now,
+                    'granted_by' => $authUserId
+                ];
+            }
+            
+            // Executar a sincronização
+            $user->permissions()->sync($syncData);
+            
+            // Registrar no log de auditoria
+            if (!empty($added) || !empty($removed)) {
+                $addedPermissions = \App\Models\Permission::whereIn('id', $added)->get();
+                $removedPermissions = \App\Models\Permission::whereIn('id', $removed)->get();
+                
+                foreach ($addedPermissions as $permission) {
+                    AuditService::logPermissionGranted($user, $permission, Auth::user());
+                }
+                
+                foreach ($removedPermissions as $permission) {
+                    AuditService::logPermissionRevoked($user, $permission, Auth::user());
+                }
+            }
 
             return redirect()->route('users.permissions', $user)
                            ->with('success', 'Permissões atualizadas com sucesso!');

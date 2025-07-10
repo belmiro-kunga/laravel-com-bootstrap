@@ -7,6 +7,7 @@ use App\Models\Denuncia;
 use App\Models\Status;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\AuditService;
 
 class RastreamentoController extends Controller
 {
@@ -111,61 +112,71 @@ class RastreamentoController extends Controller
         ]);
     }
     
+    /**
+     * Exibe o formulário de rastreamento público de denúncias
+     */
     public function publico(Request $request)
     {
         $protocolo = $request->query('protocolo');
         return view('rastreamento.publico', compact('protocolo'));
     }
-    
+
+    /**
+     * Processa a busca de uma denúncia pelo protocolo (público)
+     */
     public function publicoBuscar(Request $request)
     {
         $request->validate([
-            'protocolo' => 'required|string|max:20'
+            'protocolo' => 'required|string|max:50',
         ]);
-        
+
         $protocolo = $request->protocolo;
         
         // Buscar denúncia pelo protocolo
         $denuncia = Denuncia::where('protocolo', $protocolo)
-            ->with(['categoria', 'status', 'responsavel'])
+            ->with(['categoria', 'status', 'comentarios' => function($query) {
+                $query->where('publico', true)
+                      ->orWhere('tipo', 'mensagem')
+                      ->with(['user', 'replies' => function($q) {
+                          $q->where('publico', true);
+                      }]);
+            }, 'evidencias' => function($query) {
+                $query->where('publico', true);
+            }])
             ->first();
-        
+
         if (!$denuncia) {
-            return back()->with('error', 'Denúncia não encontrada. Verifique o protocolo informado.');
+            return back()->with('error', 'Nenhuma denúncia encontrada com o protocolo informado.');
         }
-        
-        return view('rastreamento.publico-resultado', compact('denuncia'));
+
+        // Registrar auditoria de consulta
+        AuditService::logRastreamento($denuncia, $request->ip(), $request->userAgent());
+
+        return view('rastreamento.resultado-publico', compact('denuncia'));
     }
-    
+
+    /**
+     * Gera um PDF com os detalhes da denúncia (público)
+     */
     public function downloadPDF($protocolo)
     {
-        // Buscar denúncia pelo protocolo
         $denuncia = Denuncia::where('protocolo', $protocolo)
-            ->with(['categoria', 'status', 'responsavel', 'comentarios.user', 'evidencias'])
-            ->first();
+            ->with(['categoria', 'status', 'comentarios' => function($query) {
+                $query->where('publico', true)
+                      ->orWhere('tipo', 'mensagem')
+                      ->with(['user', 'replies' => function($q) {
+                          $q->where('publico', true);
+                      }]);
+            }, 'evidencias' => function($query) {
+                $query->where('publico', true);
+            }])
+            ->firstOrFail();
+
+        // Registrar auditoria de download
+        AuditService::logDownloadPDF($denuncia, request()->ip(), request()->userAgent());
+
+        $pdf = PDF::loadView('rastreamento.pdf-publico', compact('denuncia'));
         
-        if (!$denuncia) {
-            return back()->with('error', 'Denúncia não encontrada.');
-        }
-        
-        // Buscar histórico de status
-        $historicoStatus = Status::orderBy('ordem')->get();
-        
-        // Gerar PDF
-        $pdf = PDF::loadView('rastreamento.pdf', compact('denuncia', 'historicoStatus'));
-        
-        // Configurar o PDF
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->setOptions([
-            'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true,
-            'defaultFont' => 'Arial'
-        ]);
-        
-        // Nome do arquivo
-        $filename = 'denuncia_' . $denuncia->protocolo . '_' . date('Y-m-d_H-i-s') . '.pdf';
-        
-        // Download do PDF
-        return $pdf->download($filename);
+        return $pdf->download("denuncia-{$denuncia->protocolo}.pdf");
     }
 }

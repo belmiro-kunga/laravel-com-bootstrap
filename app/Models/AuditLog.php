@@ -89,7 +89,9 @@ class AuditLog extends Model
             'file_downloaded' => 'Arquivo Baixado',
             'comment_added' => 'Comentário Adicionado',
             'status_changed' => 'Status Alterado',
-            'responsible_assigned' => 'Responsável Atribuído'
+            'responsible_assigned' => 'Responsável Atribuído',
+            'public_tracking' => 'Rastreamento Público',
+            'public_pdf_download' => 'Download de PDF Público'
         ];
         return $labels[$this->event] ?? ucfirst($this->event);
     }
@@ -110,7 +112,9 @@ class AuditLog extends Model
             'file_downloaded' => 'fas fa-download text-info',
             'comment_added' => 'fas fa-comment text-primary',
             'status_changed' => 'fas fa-exchange-alt text-warning',
-            'responsible_assigned' => 'fas fa-user-tie text-primary'
+            'responsible_assigned' => 'fas fa-user-tie text-primary',
+            'public_tracking' => 'fas fa-search-plus text-info',
+            'public_pdf_download' => 'fas fa-file-pdf text-danger'
         ];
         return $icons[$this->event] ?? 'fas fa-info-circle text-secondary';
     }

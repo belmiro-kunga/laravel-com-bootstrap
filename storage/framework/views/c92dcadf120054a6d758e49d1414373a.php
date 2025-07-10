@@ -225,10 +225,10 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #3a5f8d 0%, #2c3e50 100%); color: #fff;">
+    <section class="py-5" style="background: linear-gradient(135deg, #3a5f8d 0%, #2c3e50 100%); color: #fff;">
         <div class="container py-5">
             <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
+                <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
                     <h1 class="display-4 fw-bold mb-4">Faça sua <span class="text-warning">denúncia</span> de forma segura e anônima</h1>
                     <p class="lead mb-4">Proteja sua comunidade com nosso sistema de denúncias online. Rápido, seguro e totalmente sigiloso.</p>
                     <div class="d-flex flex-wrap gap-3">
@@ -239,28 +239,15 @@
                             <i class="fas fa-search-location me-2"></i>Rastrear Denúncia
                         </a>
                     </div>
-                    <div class="mt-4 d-flex flex-wrap gap-3">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>100% Anônimo</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            <span>Fácil de usar</span>
-                        </div>
-                    </div>
                 </div>
-                <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
-                    <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
-                        <img src="https://images.unsplash.com/photo-1581094271901-8022df4466f9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" 
-                             alt="Segurança" 
-                             class="img-fluid"
-                             style="width: 100%; height: 400px; object-fit: cover;">
-                    </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <img src="https://images.unsplash.com/photo-1581094794329-c811e9f8dd53?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Sistema de Denúncias" 
+                         class="img-fluid rounded-3 shadow-lg">
                 </div>
             </div>
         </div>
-    </header>
+    </section>
 
     <!-- Features Section -->
     <section class="py-5 bg-light">
@@ -269,33 +256,33 @@
                 <div class="col-md-4" data-aos="fade-up">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body text-center p-4">
-                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-user-shield text-primary" style="font-size: 1.8rem;"></i>
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-user-shield"></i>
                             </div>
-                            <h4 class="h5 mb-3">Totalmente Anônimo</h4>
-                            <p class="text-muted mb-0">Sua identidade é preservada em todas as etapas do processo de denúncia.</p>
+                            <h3 class="h4 mb-3">Anonimato Garantido</h3>
+                            <p class="text-muted">Sua identidade será mantida em sigilo total. Ninguém saberá que foi você quem fez a denúncia.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body text-center p-4">
-                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-shield-alt text-primary" style="font-size: 1.8rem;"></i>
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-lock"></i>
                             </div>
-                            <h4 class="h5 mb-3">Segurança Garantida</h4>
-                            <p class="text-muted mb-0">Utilizamos criptografia avançada para proteger todas as informações.</p>
+                            <h3 class="h4 mb-3">Segurança Máxima</h3>
+                            <p class="text-muted">Utilizamos criptografia avançada para proteger todas as informações fornecidas.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body text-center p-4">
-                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                                <i class="fas fa-mobile-alt text-primary" style="font-size: 1.8rem;"></i>
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-mobile-alt"></i>
                             </div>
-                            <h4 class="h5 mb-3">Acesso Fácil</h4>
-                            <p class="text-muted mb-0">Interface intuitiva e responsiva para qualquer dispositivo.</p>
+                            <h3 class="h4 mb-3">Acesso Fácil</h3>
+                            <p class="text-muted">Faça denúncias de qualquer dispositivo, a qualquer momento. Totalmente responsivo e fácil de usar.</p>
                         </div>
                     </div>
                 </div>
@@ -303,7 +290,7 @@
         </div>
     </section>
 
-    <!-- How It Works -->
+    <!-- How It Works Section -->
     <section class="py-5">
         <div class="container py-5">
             <div class="row align-items-center">
@@ -311,7 +298,7 @@
                     <h2 class="fw-bold mb-4">Como funciona</h2>
                     <div class="d-flex mb-4">
                         <div class="me-4">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold mb-2" style="width: 40px; height: 40px;">1</div>
+                            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem; font-weight: bold;">1</div>
                         </div>
                         <div>
                             <h4 class="h5">Preencha o formulário</h4>
@@ -320,35 +307,34 @@
                     </div>
                     <div class="d-flex mb-4">
                         <div class="me-4">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold mb-2" style="width: 40px; height: 40px;">2</div>
+                            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem; font-weight: bold;">2</div>
                         </div>
                         <div>
-                            <h4 class="h5">Receba o protocolo</h4>
-                            <p class="text-muted mb-0">Anote o número de protocolo para acompanhar o andamento.</p>
+                            <h4 class="h5">Receba o número de protocolo</h4>
+                            <p class="text-muted mb-0">Anote o número para acompanhar o andamento da sua denúncia.</p>
                         </div>
                     </div>
                     <div class="d-flex">
                         <div class="me-4">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold mb-2" style="width: 40px; height: 40px;">3</div>
+                            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 50px; height: 50px; font-size: 1.5rem; font-weight: bold;">3</div>
                         </div>
                         <div>
-                            <h4 class="h5">Acompanhe sua denúncia</h4>
-                            <p class="text-muted mb-0">Use o número do protocolo para verificar atualizações.</p>
+                            <h4 class="h5">Acompanhe o andamento</h4>
+                            <p class="text-muted mb-0">Use o número do protocolo para verificar o status da sua denúncia.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6" data-aos="fade-left">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                            <h3 class="h5 fw-bold mb-4">Rastreie sua denúncia</h3>
-                            <form action="<?php echo e(route('rastreamento.publico')); ?>" method="GET" class="needs-validation" novalidate>
+                            <h3 class="h4 mb-4">Acompanhe sua denúncia</h3>
+                            <form action="<?php echo e(route('rastreamento.publico')); ?>" method="GET">
                                 <div class="mb-3">
                                     <label for="protocolo" class="form-label">Número do Protocolo</label>
                                     <input type="text" class="form-control form-control-lg" id="protocolo" name="protocolo" placeholder="Digite o número do protocolo" required>
-                                    <div class="invalid-feedback">Por favor, informe o número do protocolo.</div>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100 btn-lg">
-                                    <i class="fas fa-search me-2"></i>Rastrear Agora
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i> Acompanhar Denúncia
                                 </button>
                             </form>
                         </div>
@@ -359,17 +345,16 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-5 bg-primary text-white">
-        <div class="container py-5">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-8" data-aos="zoom-in">
-                    <h2 class="fw-bold mb-4">Pronto para fazer sua denúncia?</h2>
-                    <p class="lead mb-4">Ajude a manter nossa comunidade segura. Sua identidade será preservada.</p>
-                    <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="btn btn-light btn-lg px-5">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Fazer Denúncia Agora
-                    </a>
-                </div>
-            </div>
+    <section class="py-5 cta-section">
+        <div class="container text-center">
+            <h2 class="mb-4">Pronto para fazer a diferença?</h2>
+            <p class="lead mb-4">Use nossos canais para registrar sua denúncia ou acompanhar um caso existente.</p>
+            <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="btn btn-light btn-lg me-2">
+                <i class="fas fa-bullhorn me-2"></i> Fazer Denúncia
+            </a>
+            <a href="<?php echo e(route('rastreamento.publico')); ?>" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-search me-2"></i> Rastrear Denúncia
+            </a>
         </div>
     </section>
 
@@ -384,117 +369,23 @@
         </div>
     </footer>
 
-    <!-- JavaScript Libraries -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
     <script>
-        // Inicializa AOS (Animate On Scroll)
+        // Initialize AOS
         AOS.init({
-            duration: 1000,
+            duration: 800,
             easing: 'ease-in-out',
             once: true
         });
 
-        // Back to top button
-        const backToTopButton = document.getElementById('backToTop');
-        if (backToTopButton) {
-            window.addEventListener('scroll', () => {
-                if (window.pageYOffset > 300) {
-                    backToTopButton.style.opacity = '1';
-                    backToTopButton.style.visibility = 'visible';
-                } else {
-                    backToTopButton.style.opacity = '0';
-                    backToTopButton.style.visibility = 'hidden';
-                }
-            });
-
-            backToTopButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-
-        // Validação de formulário
-        (function () {
-            'use strict'
-            var forms = document.querySelectorAll('.needs-validation')
-            Array.prototype.slice.call(forms)
-                .forEach(function (form) {
-                    form.addEventListener('submit', function (event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault()
-                            event.stopPropagation()
-                        }
-                        form.classList.add('was-validated')
-                    }, false)
-                })
-        })()
-
-        // Anima os números das estatísticas
-        function animateStats() {
-            const statNumbers = document.querySelectorAll('.stat-number');
-            
-            statNumbers.forEach(stat => {
-                const target = parseInt(stat.getAttribute('data-target'));
-                const duration = 2000; // 2 segundos
-                const step = target / (duration / 16); // 60fps
-                let current = 0;
-                
-                const updateNumber = () => {
-                    current += step;
-                    if (current < target) {
-                        stat.textContent = Math.floor(current).toLocaleString();
-                        requestAnimationFrame(updateNumber);
-                    } else {
-                        stat.textContent = target.toLocaleString();
-                    }
-                };
-                
-                updateNumber();
-            });
-        }
-
-        // Inicia a animação quando a seção de estatísticas estiver visível
-        const statsSection = document.querySelector('.stats-section');
-        if (statsSection) {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        animateStats();
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.5 });
-            observer.observe(statsSection);
-        }
-        
-        // Back to top button visibility on scroll
-        window.addEventListener('scroll', () => {
-            const backToTopButton = document.getElementById('backToTop');
-            if (backToTopButton) {
-                if (window.pageYOffset > 300) {
-                    backToTopButton.style.opacity = '1';
-                    backToTopButton.style.visibility = 'visible';
-                    backToTopButton.classList.add('show');
-                } else {
-                    backToTopButton.style.opacity = '0';
-                    backToTopButton.style.visibility = 'hidden';
-                    backToTopButton.classList.remove('show');
-                }
-            }
-        });
-
-        backToTopButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
         // Navbar scroll effect
         const navbar = document.querySelector('.navbar');
-        
         window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
@@ -551,35 +442,6 @@
             observer.observe(counterSection);
         }
     </script>
-    <!-- CTA Section -->
-    <section class="section cta-section">
-        <div class="container text-center">
-            <h2 class="mb-4"><?php echo e(\App\Helpers\ConfigHelper::get('home_cta_title', 'Pronto para fazer a diferença?')); ?></h2>
-            <p class="lead mb-4"><?php echo e(\App\Helpers\ConfigHelper::get('home_cta_subtitle', 'Use nossos canais para registrar sua denúncia ou acompanhar um caso existente.')); ?></p>
-            <a href="<?php echo e(route('denuncias.formulario-publico')); ?>" class="btn btn-light btn-lg me-2">
-                <i class="fas fa-bullhorn me-2"></i> <?php echo e(\App\Helpers\ConfigHelper::get('home_cta_button_text', 'Fazer Denúncia')); ?>
-
-            </a>
-            <a href="<?php echo e(route('rastreamento.publico')); ?>" class="btn btn-outline-light btn-lg">
-                <i class="fas fa-search me-2"></i> <?php echo e(\App\Helpers\ConfigHelper::get('home_cta_button_secondary', 'Rastrear Denúncia')); ?>
-
-            </a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container text-center">
-            <p>&copy; <?php echo e(date('Y')); ?> <?php echo e(\App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias')); ?>. Todos os direitos reservados.</p>
-            <p>
-                <a href="#">Política de Privacidade</a> | 
-                <a href="#">Termos de Uso</a>
-            </p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 <?php /**PATH C:\xampp\htdocs\laravel com bootstrap\resources\views/home.blade.php ENDPATH**/ ?>
