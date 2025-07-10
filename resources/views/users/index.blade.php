@@ -301,6 +301,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/user-fab.js') }}"></script>
 <script>
 // Função para alternar visibilidade da senha
 function togglePassword(fieldId) {

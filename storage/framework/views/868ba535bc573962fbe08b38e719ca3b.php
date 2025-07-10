@@ -376,6 +376,7 @@ unset($__errorArgs, $__bag); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
+<script src="<?php echo e(asset('js/user-fab.js')); ?>"></script>
 <script>
 // Função para alternar visibilidade da senha
 function togglePassword(fieldId) {
