@@ -94,18 +94,43 @@ class CategoriaController extends Controller
     public function edit(Categoria $categoria)
     {
         if (!Auth::user()->podeGerenciarCategorias()) {
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Acesso negado.'
+                ], 403);
+            }
             abort(403, 'Acesso negado.');
         }
 
-        // Se for requisição AJAX, retornar JSON
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'categoria' => $categoria
-            ]);
-        }
+        try {
+            // Se for requisição AJAX, retornar JSON
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'categoria' => [
+                        'id' => $categoria->id,
+                        'nome' => $categoria->nome,
+                        'descricao' => $categoria->descricao,
+                        'cor' => $categoria->cor,
+                        'ordem' => $categoria->ordem,
+                        'ativo' => $categoria->ativo
+                    ]
+                ]);
+            }
 
-        return view('categorias.edit', compact('categoria'));
+            return view('categorias.edit', compact('categoria'));
+            
+        } catch (\Exception $e) {
+            \Log::error('Erro ao buscar categoria: ' . $e->getMessage());
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erro ao carregar dados da categoria.'
+                ], 500);
+            }
+            return back()->with('error', 'Erro ao carregar categoria: ' . $e->getMessage());
+        }
     }
 
     /**

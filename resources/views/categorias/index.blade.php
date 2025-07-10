@@ -192,40 +192,69 @@
 @push('scripts')
 <script>
 function editarCategoria(id) {
+    // Mostrar loading
+    const btnEdit = document.querySelector(`button[onclick="editarCategoria(${id})"]`);
+    const originalContent = btnEdit.innerHTML;
+    btnEdit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btnEdit.disabled = true;
+
     // Buscar dados da categoria via AJAX
-    fetch(`/categorias/${id}/edit`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const categoria = data.categoria;
-                // Preencher o formulário
-                document.getElementById('nome').value = categoria.nome;
-                document.getElementById('descricao').value = categoria.descricao || '';
-                document.getElementById('cor').value = categoria.cor;
-                document.getElementById('ordem').value = categoria.ordem || 1;
-                document.getElementById('ativo').checked = categoria.ativo;
-                // Atualizar modal
-                document.getElementById('modalCategoriaLabel').textContent = 'Editar Categoria';
-                document.getElementById('formCategoria').action = `/categorias/${id}`;
-                // Adicionar método PUT
-                let methodInput = document.querySelector('input[name="_method"]');
-                if (!methodInput) {
-                    methodInput = document.createElement('input');
-                    methodInput.type = 'hidden';
-                    methodInput.name = '_method';
-                    document.getElementById('formCategoria').appendChild(methodInput);
-                }
-                methodInput.value = 'PUT';
-                // Abrir modal
-                new bootstrap.Modal(document.getElementById('modalCategoria')).show();
-            } else {
-                alert('Erro ao carregar dados da categoria');
+    fetch(`/categorias/${id}/edit`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.message || 'Erro ao carregar categoria');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const categoria = data.categoria;
+            // Preencher o formulário
+            document.getElementById('nome').value = categoria.nome || '';
+            document.getElementById('descricao').value = categoria.descricao || '';
+            document.getElementById('cor').value = categoria.cor || '#007bff';
+            document.getElementById('ordem').value = categoria.ordem || 1;
+            document.getElementById('ativo').checked = categoria.ativo !== undefined ? categoria.ativo : true;
+            
+            // Atualizar modal
+            document.getElementById('modalCategoriaLabel').textContent = 'Editar Categoria';
+            document.getElementById('formCategoria').action = `/categorias/${id}`;
+            
+            // Adicionar/Atualizar método PUT
+            let methodInput = document.querySelector('input[name="_method"]');
+            if (!methodInput) {
+                methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                document.getElementById('formCategoria').appendChild(methodInput);
             }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao carregar dados da categoria');
-        });
+            methodInput.value = 'PUT';
+            
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById('modalCategoria'));
+            modal.show();
+        } else {
+            throw new Error(data.message || 'Erro ao carregar dados da categoria');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert(error.message || 'Ocorreu um erro ao carregar a categoria. Por favor, tente novamente.');
+    })
+    .finally(() => {
+        // Restaurar botão
+        if (btnEdit) {
+            btnEdit.innerHTML = originalContent;
+            btnEdit.disabled = false;
+        }
+    });
 }
 // Resetar formulário quando modal for fechado
 if (document.getElementById('modalCategoria')) {
