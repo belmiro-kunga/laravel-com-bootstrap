@@ -258,18 +258,15 @@ function editarCategoria(id) {
         .then(data => {
             if (data.success) {
                 const categoria = data.categoria;
-                
                 // Preencher o formulário
                 document.getElementById('nome').value = categoria.nome;
                 document.getElementById('descricao').value = categoria.descricao || '';
                 document.getElementById('cor').value = categoria.cor;
                 document.getElementById('ordem').value = categoria.ordem || 1;
                 document.getElementById('ativo').checked = categoria.ativo;
-                
                 // Atualizar modal
                 document.getElementById('modalCategoriaLabel').textContent = 'Editar Categoria';
                 document.getElementById('formCategoria').action = `/categorias/${id}`;
-                
                 // Adicionar método PUT
                 let methodInput = document.querySelector('input[name="_method"]');
                 if (!methodInput) {
@@ -279,7 +276,6 @@ function editarCategoria(id) {
                     document.getElementById('formCategoria').appendChild(methodInput);
                 }
                 methodInput.value = 'PUT';
-                
                 // Abrir modal
                 new bootstrap.Modal(document.getElementById('modalCategoria')).show();
             } else {
@@ -291,22 +287,22 @@ function editarCategoria(id) {
             alert('Erro ao carregar dados da categoria');
         });
 }
-
 // Resetar formulário quando modal for fechado
-document.getElementById('modalCategoria').addEventListener('hidden.bs.modal', function () {
-    document.getElementById('formCategoria').reset();
-    document.getElementById('modalCategoriaLabel').textContent = 'Nova Categoria';
-    document.getElementById('formCategoria').action = '<?php echo e(route("categorias.store")); ?>';
-    document.getElementById('cor').value = '#007bff';
-    document.getElementById('ordem').value = '1';
-    document.getElementById('ativo').checked = true;
-    
-    // Remover método PUT se existir
-    const methodInput = document.querySelector('input[name="_method"]');
-    if (methodInput) {
-        methodInput.remove();
-    }
-});
+if (document.getElementById('modalCategoria')) {
+    document.getElementById('modalCategoria').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('formCategoria').reset();
+        document.getElementById('modalCategoriaLabel').textContent = 'Nova Categoria';
+        document.getElementById('formCategoria').action = '<?php echo e(route("categorias.store")); ?>';
+        document.getElementById('cor').value = '#007bff';
+        document.getElementById('ordem').value = '1';
+        document.getElementById('ativo').checked = true;
+        // Remover método PUT se existir
+        const methodInput = document.querySelector('input[name="_method"]');
+        if (methodInput) {
+            methodInput.remove();
+        }
+    });
+}
 </script>
 <?php $__env->stopPush(); ?> 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\laravel com bootstrap\resources\views/categorias/index.blade.php ENDPATH**/ ?>
