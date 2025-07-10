@@ -119,12 +119,15 @@
                             <a href="{{ route('denuncias.edit', $denuncia) }}" class="btn btn-sm btn-outline-secondary" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('denuncias.alterar-status', $denuncia) }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Alterar Status">
-                                    <i class="fas fa-random"></i>
-                                </button>
-                            </form>
+                            <!-- Botão para abrir modal de alteração de status -->
+                            <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                title="Alterar Status"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalAlterarStatus"
+                                data-denuncia-id="{{ $denuncia->id }}">
+                                <i class="fas fa-random"></i>
+                            </button>
                         </td>
                     </tr>
                     @empty
@@ -140,4 +143,55 @@
         </div>
     </x-admin.card>
 </div>
-@endsection 
+@endsection
+
+@push('modals')
+<!-- Modal de alteração de status -->
+<div class="modal fade" id="modalAlterarStatus" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formAlterarStatus" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar Status da Denúncia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="novo_status" class="form-label">Novo Status</label>
+                        <select name="status_id" id="novo_status" class="form-select" required>
+                            @foreach(\App\Models\Status::ativos()->ordenados()->get() as $status)
+                                <option value="{{ $status->id }}">{{ $status->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comentario_status" class="form-label">Comentário (opcional)</label>
+                        <textarea name="comentario" id="comentario_status" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Alteração</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('modalAlterarStatus');
+    if (modal) {
+        modal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var denunciaId = button.getAttribute('data-denuncia-id');
+            var form = document.getElementById('formAlterarStatus');
+            form.action = '/denuncias/' + denunciaId + '/alterar-status';
+        });
+    }
+});
+</script>
+@endpush 

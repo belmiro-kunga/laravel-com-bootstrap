@@ -168,12 +168,15 @@
                             <a href="<?php echo e(route('denuncias.edit', $denuncia)); ?>" class="btn btn-sm btn-outline-secondary" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="<?php echo e(route('denuncias.alterar-status', $denuncia)); ?>" method="POST" class="d-inline">
-                                <?php echo csrf_field(); ?>
-                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Alterar Status">
-                                    <i class="fas fa-random"></i>
-                                </button>
-                            </form>
+                            <!-- Botão para abrir modal de alteração de status -->
+                            <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                title="Alterar Status"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalAlterarStatus"
+                                data-denuncia-id="<?php echo e($denuncia->id); ?>">
+                                <i class="fas fa-random"></i>
+                            </button>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
@@ -199,5 +202,56 @@
 <?php unset($__componentOriginalad5130b5347ab6ecc017d2f5a278b926); ?>
 <?php endif; ?>
 </div>
-<?php $__env->stopSection(); ?> 
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('modals'); ?>
+<!-- Modal de alteração de status -->
+<div class="modal fade" id="modalAlterarStatus" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formAlterarStatus" method="POST">
+                <?php echo csrf_field(); ?>
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar Status da Denúncia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="novo_status" class="form-label">Novo Status</label>
+                        <select name="status_id" id="novo_status" class="form-select" required>
+                            <?php $__currentLoopData = \App\Models\Status::ativos()->ordenados()->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($status->id); ?>"><?php echo e($status->nome); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comentario_status" class="form-label">Comentário (opcional)</label>
+                        <textarea name="comentario" id="comentario_status" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Alteração</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startPush('scripts'); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('modalAlterarStatus');
+    if (modal) {
+        modal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var denunciaId = button.getAttribute('data-denuncia-id');
+            var form = document.getElementById('formAlterarStatus');
+            form.action = '/denuncias/' + denunciaId + '/alterar-status';
+        });
+    }
+});
+</script>
+<?php $__env->stopPush(); ?> 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\laravel com bootstrap\resources\views/denuncias/index.blade.php ENDPATH**/ ?>

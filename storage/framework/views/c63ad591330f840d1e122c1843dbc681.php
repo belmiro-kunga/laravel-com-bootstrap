@@ -246,5 +246,6 @@
     </script>
     
     <?php echo $__env->yieldPushContent('scripts'); ?>
+    <?php echo $__env->yieldPushContent('modals'); ?>
 </body>
 </html> <?php /**PATH C:\xampp\htdocs\laravel com bootstrap\resources\views/layouts/app.blade.php ENDPATH**/ ?>
