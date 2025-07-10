@@ -25,6 +25,36 @@
         :root {
             --primary-color: {{ \App\Helpers\ConfigHelper::get('primary_color', '#4e73df') }};
         }
+        
+        /* Estilos para o breadcrumb */
+        .main-content {
+            padding-top: 1.5rem;
+        }
+        
+        .content-wrapper {
+            margin-top: 1rem;
+        }
+        
+        .breadcrumb-wrapper {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Ajustes para mobile */
+        @media (max-width: 767.98px) {
+            .main-content {
+                padding: 1rem 0.5rem;
+            }
+            
+            .content-wrapper {
+                margin-top: 0.5rem;
+            }
+            
+            .breadcrumb-wrapper {
+                margin-left: -0.75rem;
+                margin-right: -0.75rem;
+                margin-bottom: 1rem;
+            }
+        }
     </style>
     
     @stack('styles')
@@ -41,38 +71,42 @@
                 <!-- Top navbar -->
                 <x-admin.navbar />
                 
-                <!-- Breadcrumb -->
-                @hasSection('breadcrumb')
-                    @yield('breadcrumb')
-                @endif
-                
-                <!-- Alerts -->
-                @if(session('success'))
-                    <x-admin.alert type="success">
-                        {{ session('success') }}
-                    </x-admin.alert>
-                @endif
-                
-                @if(session('error'))
-                    <x-admin.alert type="danger">
-                        {{ session('error') }}
-                    </x-admin.alert>
-                @endif
-                
-                @if(session('warning'))
-                    <x-admin.alert type="warning">
-                        {{ session('warning') }}
-                    </x-admin.alert>
-                @endif
-                
-                @if(session('info'))
-                    <x-admin.alert type="info">
-                        {{ session('info') }}
-                    </x-admin.alert>
-                @endif
-                
-                <!-- Main content -->
-                @yield('content')
+                <div class="content-wrapper">
+                    <!-- Breadcrumb -->
+                    @hasSection('breadcrumb')
+                        <div class="breadcrumb-wrapper">
+                            @yield('breadcrumb')
+                        </div>
+                    @endif
+                    
+                    <!-- Alerts -->
+                    @if(session('success'))
+                        <x-admin.alert type="success">
+                            {{ session('success') }}
+                        </x-admin.alert>
+                    @endif
+                    
+                    @if(session('error'))
+                        <x-admin.alert type="danger">
+                            {{ session('error') }}
+                        </x-admin.alert>
+                    @endif
+                    
+                    @if(session('warning'))
+                        <x-admin.alert type="warning">
+                            {{ session('warning') }}
+                        </x-admin.alert>
+                    @endif
+                    
+                    @if(session('info'))
+                        <x-admin.alert type="info">
+                            {{ session('info') }}
+                        </x-admin.alert>
+                    @endif
+                    
+                    <!-- Main content -->
+                    @yield('content')
+                </div>
             </main>
         </div>
     </div>

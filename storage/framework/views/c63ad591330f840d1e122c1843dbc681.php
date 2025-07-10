@@ -25,6 +25,36 @@
         :root {
             --primary-color: <?php echo e(\App\Helpers\ConfigHelper::get('primary_color', '#4e73df')); ?>;
         }
+        
+        /* Estilos para o breadcrumb */
+        .main-content {
+            padding-top: 1.5rem;
+        }
+        
+        .content-wrapper {
+            margin-top: 1rem;
+        }
+        
+        .breadcrumb-wrapper {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Ajustes para mobile */
+        @media (max-width: 767.98px) {
+            .main-content {
+                padding: 1rem 0.5rem;
+            }
+            
+            .content-wrapper {
+                margin-top: 0.5rem;
+            }
+            
+            .breadcrumb-wrapper {
+                margin-left: -0.75rem;
+                margin-right: -0.75rem;
+                margin-bottom: 1rem;
+            }
+        }
     </style>
     
     <?php echo $__env->yieldPushContent('styles'); ?>
@@ -79,14 +109,17 @@
 <?php unset($__componentOriginalf818c67b6eb448edb731318e48f2e69b); ?>
 <?php endif; ?>
                 
-                <!-- Breadcrumb -->
-                <?php if (! empty(trim($__env->yieldContent('breadcrumb')))): ?>
-                    <?php echo $__env->yieldContent('breadcrumb'); ?>
-                <?php endif; ?>
-                
-                <!-- Alerts -->
-                <?php if(session('success')): ?>
-                    <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
+                <div class="content-wrapper">
+                    <!-- Breadcrumb -->
+                    <?php if (! empty(trim($__env->yieldContent('breadcrumb')))): ?>
+                        <div class="breadcrumb-wrapper">
+                            <?php echo $__env->yieldContent('breadcrumb'); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <!-- Alerts -->
+                    <?php if(session('success')): ?>
+                        <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald888329b8246e32afd68d2decbd25cf1 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.admin.alert','data' => ['type' => 'success']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
 <?php $component->withName('admin.alert'); ?>
@@ -96,9 +129,9 @@
 <?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['type' => 'success']); ?>
-                        <?php echo e(session('success')); ?>
+                            <?php echo e(session('success')); ?>
 
-                     <?php echo $__env->renderComponent(); ?>
+                         <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald888329b8246e32afd68d2decbd25cf1)): ?>
 <?php $attributes = $__attributesOriginald888329b8246e32afd68d2decbd25cf1; ?>
@@ -108,10 +141,10 @@
 <?php $component = $__componentOriginald888329b8246e32afd68d2decbd25cf1; ?>
 <?php unset($__componentOriginald888329b8246e32afd68d2decbd25cf1); ?>
 <?php endif; ?>
-                <?php endif; ?>
-                
-                <?php if(session('error')): ?>
-                    <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
+                    <?php endif; ?>
+                    
+                    <?php if(session('error')): ?>
+                        <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald888329b8246e32afd68d2decbd25cf1 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.admin.alert','data' => ['type' => 'danger']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
 <?php $component->withName('admin.alert'); ?>
@@ -121,9 +154,9 @@
 <?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['type' => 'danger']); ?>
-                        <?php echo e(session('error')); ?>
+                            <?php echo e(session('error')); ?>
 
-                     <?php echo $__env->renderComponent(); ?>
+                         <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald888329b8246e32afd68d2decbd25cf1)): ?>
 <?php $attributes = $__attributesOriginald888329b8246e32afd68d2decbd25cf1; ?>
@@ -133,10 +166,10 @@
 <?php $component = $__componentOriginald888329b8246e32afd68d2decbd25cf1; ?>
 <?php unset($__componentOriginald888329b8246e32afd68d2decbd25cf1); ?>
 <?php endif; ?>
-                <?php endif; ?>
-                
-                <?php if(session('warning')): ?>
-                    <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
+                    <?php endif; ?>
+                    
+                    <?php if(session('warning')): ?>
+                        <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald888329b8246e32afd68d2decbd25cf1 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.admin.alert','data' => ['type' => 'warning']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
 <?php $component->withName('admin.alert'); ?>
@@ -146,9 +179,9 @@
 <?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['type' => 'warning']); ?>
-                        <?php echo e(session('warning')); ?>
+                            <?php echo e(session('warning')); ?>
 
-                     <?php echo $__env->renderComponent(); ?>
+                         <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald888329b8246e32afd68d2decbd25cf1)): ?>
 <?php $attributes = $__attributesOriginald888329b8246e32afd68d2decbd25cf1; ?>
@@ -158,10 +191,10 @@
 <?php $component = $__componentOriginald888329b8246e32afd68d2decbd25cf1; ?>
 <?php unset($__componentOriginald888329b8246e32afd68d2decbd25cf1); ?>
 <?php endif; ?>
-                <?php endif; ?>
-                
-                <?php if(session('info')): ?>
-                    <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
+                    <?php endif; ?>
+                    
+                    <?php if(session('info')): ?>
+                        <?php if (isset($component)) { $__componentOriginald888329b8246e32afd68d2decbd25cf1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald888329b8246e32afd68d2decbd25cf1 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.admin.alert','data' => ['type' => 'info']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
 <?php $component->withName('admin.alert'); ?>
@@ -171,9 +204,9 @@
 <?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['type' => 'info']); ?>
-                        <?php echo e(session('info')); ?>
+                            <?php echo e(session('info')); ?>
 
-                     <?php echo $__env->renderComponent(); ?>
+                         <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald888329b8246e32afd68d2decbd25cf1)): ?>
 <?php $attributes = $__attributesOriginald888329b8246e32afd68d2decbd25cf1; ?>
@@ -183,10 +216,11 @@
 <?php $component = $__componentOriginald888329b8246e32afd68d2decbd25cf1; ?>
 <?php unset($__componentOriginald888329b8246e32afd68d2decbd25cf1); ?>
 <?php endif; ?>
-                <?php endif; ?>
-                
-                <!-- Main content -->
-                <?php echo $__env->yieldContent('content'); ?>
+                    <?php endif; ?>
+                    
+                    <!-- Main content -->
+                    <?php echo $__env->yieldContent('content'); ?>
+                </div>
             </main>
         </div>
     </div>
