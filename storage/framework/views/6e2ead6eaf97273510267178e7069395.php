@@ -65,12 +65,6 @@
             'permission' => 'system-config.menu'
         ],
         [
-            'title' => 'Rastrear Denúncias',
-            'route' => 'rastreamento.index',
-            'icon' => 'fas fa-search',
-            'permission' => 'rastreamento.menu'
-        ],
-        [
             'title' => 'Permissões',
             'route' => 'permissions.index',
             'icon' => 'fas fa-key',
