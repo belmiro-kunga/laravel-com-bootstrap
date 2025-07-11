@@ -583,8 +583,8 @@
                 {{ \App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias') }}
             </a>
             <nav class="nav-menu">
-                <a href="{{ route('denuncias.formulario-publico') }}" class="nav-button">Fazer Denúncia</a>
-                <a href="{{ route('rastreamento.publico') }}" class="nav-button">Rastrear Denúncia</a>
+                <a href="{{ route('denuncias.formulario-publico') }}" class="nav-button">{{ \App\Helpers\ConfigHelper::get('home_cta_button_text', 'Fazer Denúncia') }}</a>
+                <a href="{{ route('rastreamento.publico') }}" class="nav-button">{{ \App\Helpers\ConfigHelper::get('home_cta_button_secondary', 'Rastrear Denúncia') }}</a>
             </nav>
         </div>
     </header>
@@ -592,11 +592,11 @@
     <!-- Seção Hero -->
     <section class="hero">
         <div class="container" data-aos="fade-up" data-aos-duration="1000">
-            <h1>Sua Voz, Nossa Prioridade. Denuncie com Segurança.</h1>
-            <p>Um ambiente seguro e confidencial para você relatar irregularidades, garantindo que sua denúncia seja ouvida e tratada com a seriedade que merece.</p>
+            <h1>{{ \App\Helpers\ConfigHelper::get('home_main_title', 'Sua Voz, Nossa Prioridade. Denuncie com Segurança.') }}</h1>
+            <p>{{ \App\Helpers\ConfigHelper::get('home_main_paragraph', 'Um ambiente seguro e confidencial para você relatar irregularidades, garantindo que sua denúncia seja ouvida e tratada com a seriedade que merece.') }}</p>
             <div class="hero-buttons">
-                <a href="{{ route('denuncias.formulario-publico') }}" class="button">Fazer uma Denúncia Agora</a>
-                <a href="{{ route('rastreamento.publico') }}" class="button">Rastrear Minha Denúncia</a>
+                <a href="{{ route('denuncias.formulario-publico') }}" class="button">{{ \App\Helpers\ConfigHelper::get('home_cta_button_text', 'Fazer uma Denúncia Agora') }}</a>
+                <a href="{{ route('rastreamento.publico') }}" class="button">{{ \App\Helpers\ConfigHelper::get('home_cta_button_secondary', 'Rastrear Minha Denúncia') }}</a>
             </div>
         </div>
     </section>
@@ -604,22 +604,22 @@
     <!-- Seção de Recursos (Features) -->
     <section class="features">
         <div class="container">
-            <h2 data-aos="fade-up">Por Que Escolher Nosso Sistema?</h2>
+            <h2 data-aos="fade-up">{{ \App\Helpers\ConfigHelper::get('home_features_title', 'Por Que Escolher Nosso Sistema?') }}</h2>
             <div class="feature-cards">
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="icon">🔒</div>
-                    <h3>Anonimato Garantido</h3>
-                    <p>Sua identidade é protegida. Você pode denunciar com total confiança, sem medo de retaliações.</p>
+                    <h3>{{ \App\Helpers\ConfigHelper::get('home_feature_1_title', 'Anonimato Garantido') }}</h3>
+                    <p>{{ \App\Helpers\ConfigHelper::get('home_feature_1_text', 'Sua identidade é protegida. Você pode denunciar com total confiança, sem medo de retaliações.') }}</p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="icon">🛡️</div>
-                    <h3>Segurança Máxima</h3>
-                    <p>Utilizamos tecnologia de ponta para proteger seus dados e informações, garantindo a integridade da sua denúncia.</p>
+                    <h3>{{ \App\Helpers\ConfigHelper::get('home_feature_2_title', 'Segurança Máxima') }}</h3>
+                    <p>{{ \App\Helpers\ConfigHelper::get('home_feature_2_text', 'Utilizamos tecnologia de ponta para proteger seus dados e informações, garantindo a integridade da sua denúncia.') }}</p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="icon">🚀</div>
-                    <h3>Acesso Fácil</h3>
-                    <p>Interface intuitiva e acessível de qualquer dispositivo, tornando o processo de denúncia simples e rápido.</p>
+                    <h3>{{ \App\Helpers\ConfigHelper::get('home_feature_3_title', 'Acesso Fácil') }}</h3>
+                    <p>{{ \App\Helpers\ConfigHelper::get('home_feature_3_text', 'Interface intuitiva e acessível de qualquer dispositivo, tornando o processo de denúncia simples e rápido.') }}</p>
                 </div>
             </div>
         </div>
@@ -628,31 +628,31 @@
     <!-- Seção "Como Funciona" -->
     <section class="how-it-works" id="fazer-denuncia">
         <div class="container">
-            <h2 data-aos="fade-up">Como Funciona o Processo de Denúncia?</h2>
+            <h2 data-aos="fade-up">{{ \App\Helpers\ConfigHelper::get('home_how_title', 'Como Funciona o Processo de Denúncia?') }}</h2>
             <div class="steps-grid">
                 <div class="step-item" data-aos="fade-right">
                     <div class="step-number">1</div>
-                    <h3>Preencha o Formulário</h3>
-                    <p>Descreva a situação em detalhes no nosso formulário seguro. Quanto mais informações, melhor.</p>
+                    <h3>{{ \App\Helpers\ConfigHelper::get('home_how_step_1_title', 'Preencha o Formulário') }}</h3>
+                    <p>{{ \App\Helpers\ConfigHelper::get('home_how_step_1_text', 'Descreva a situação em detalhes no nosso formulário seguro. Quanto mais informações, melhor.') }}</p>
                 </div>
                 <div class="step-item" data-aos="fade-up" data-aos-delay="100">
                     <div class="step-number">2</div>
-                    <h3>Receba o Protocolo</h3>
-                    <p>Após o envio, você receberá um número de protocolo único para acompanhar o status da sua denúncia.</p>
+                    <h3>{{ \App\Helpers\ConfigHelper::get('home_how_step_2_title', 'Receba o Protocolo') }}</h3>
+                    <p>{{ \App\Helpers\ConfigHelper::get('home_how_step_2_text', 'Após o envio, você receberá um número de protocolo único para acompanhar o status da sua denúncia.') }}</p>
                 </div>
                 <div class="step-item" data-aos="fade-left" data-aos-delay="200">
                     <div class="step-number">3</div>
-                    <h3>Acompanhe o Andamento</h3>
-                    <p>Use seu protocolo para rastrear a denúncia e ver as ações tomadas pela nossa equipe.</p>
+                    <h3>{{ \App\Helpers\ConfigHelper::get('home_how_step_3_title', 'Acompanhe o Andamento') }}</h3>
+                    <p>{{ \App\Helpers\ConfigHelper::get('home_how_step_3_text', 'Use seu protocolo para rastrear a denúncia e ver as ações tomadas pela nossa equipe.') }}</p>
                 </div>
             </div>
 
             <div class="tracking-section" id="rastrear-denuncia" data-aos="fade-up" data-aos-delay="300">
-                <h3>Rastreie Sua Denúncia</h3>
-                <p>Insira o número do protocolo que você recebeu para verificar o status da sua denúncia.</p>
+                <h3>{{ \App\Helpers\ConfigHelper::get('home_tracking_title', 'Rastreie Sua Denúncia') }}</h3>
+                <p>{{ \App\Helpers\ConfigHelper::get('home_tracking_paragraph', 'Insira o número do protocolo que você recebeu para verificar o status da sua denúncia.') }}</p>
                 <form class="tracking-form" action="{{ route('rastreamento.publico') }}" method="GET">
                     <input type="text" id="tracking-code" name="protocolo" placeholder="Digite seu número de protocolo" required>
-                    <button type="submit" class="button">Rastrear Denúncia</button>
+                    <button type="submit" class="button">{{ \App\Helpers\ConfigHelper::get('home_tracking_button', 'Rastrear Denúncia') }}</button>
                 </form>
             </div>
         </div>
@@ -661,18 +661,18 @@
     <!-- Seção de Contador Animado -->
     <section class="counter-section">
         <div class="container">
-            <h2 data-aos="fade-up">Nosso Impacto em Números</h2>
+            <h2 data-aos="fade-up">{{ \App\Helpers\ConfigHelper::get('home_counter_title', 'Nosso Impacto em Números') }}</h2>
             <div class="counter-item" data-aos="fade-up" data-aos-delay="100">
-                <span class="counter-value" data-target="1500">0</span>
-                <span class="counter-label">Denúncias Recebidas</span>
+                <span class="counter-value" data-target="{{ \App\Helpers\ConfigHelper::get('home_counter_1_value', '1500') }}">0</span>
+                <span class="counter-label">{{ \App\Helpers\ConfigHelper::get('home_counter_1_label', 'Denúncias Recebidas') }}</span>
             </div>
             <div class="counter-item" data-aos="fade-up" data-aos-delay="200">
-                <span class="counter-value" data-target="98">0</span>
-                <span class="counter-label">% de Resolução</span>
+                <span class="counter-value" data-target="{{ \App\Helpers\ConfigHelper::get('home_counter_2_value', '98') }}">0</span>
+                <span class="counter-label">{{ \App\Helpers\ConfigHelper::get('home_counter_2_label', '% de Resolução') }}</span>
             </div>
             <div class="counter-item" data-aos="fade-up" data-aos-delay="300">
-                <span class="counter-value" data-target="500">0</span>
-                <span class="counter-label">Casos Concluídos</span>
+                <span class="counter-value" data-target="{{ \App\Helpers\ConfigHelper::get('home_counter_3_value', '500') }}">0</span>
+                <span class="counter-label">{{ \App\Helpers\ConfigHelper::get('home_counter_3_label', 'Casos Concluídos') }}</span>
             </div>
         </div>
     </section>
@@ -680,11 +680,11 @@
     <!-- Seção de Chamada para Ação (CTA) -->
     <section class="cta">
         <div class="container" data-aos="zoom-in">
-            <h2>Faça a Diferença. Denuncie Agora!</h2>
-            <p>Sua coragem em denunciar é fundamental para construir um ambiente mais justo e transparente para todos.</p>
+            <h2>{{ \App\Helpers\ConfigHelper::get('home_cta_section_title', 'Faça a Diferença. Denuncie Agora!') }}</h2>
+            <p>{{ \App\Helpers\ConfigHelper::get('home_cta_section_paragraph', 'Sua coragem em denunciar é fundamental para construir um ambiente mais justo e transparente para todos.') }}</p>
             <div class="cta-buttons">
-                <a href="{{ route('denuncias.formulario-publico') }}" class="button">Iniciar Nova Denúncia</a>
-                <a href="{{ route('rastreamento.publico') }}" class="button">Verificar Status</a>
+                <a href="{{ route('denuncias.formulario-publico') }}" class="button">{{ \App\Helpers\ConfigHelper::get('home_cta_section_button_1', 'Iniciar Nova Denúncia') }}</a>
+                <a href="{{ route('rastreamento.publico') }}" class="button">{{ \App\Helpers\ConfigHelper::get('home_cta_section_button_2', 'Verificar Status') }}</a>
             </div>
         </div>
     </section>
@@ -692,7 +692,7 @@
     <!-- Rodapé -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; {{ date('Y') }} {{ \App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias') }}. Todos os direitos reservados.</p>
+            <p>&copy; {{ date('Y') }} {{ \App\Helpers\ConfigHelper::get('site_name', 'Sistema de Denúncias') }}. {{ \App\Helpers\ConfigHelper::get('home_footer_text', 'Todos os direitos reservados.') }}</p>
             <div class="footer-links">
                 <a href="#">Política de Privacidade</a>
                 <a href="#">Termos de Uso</a>

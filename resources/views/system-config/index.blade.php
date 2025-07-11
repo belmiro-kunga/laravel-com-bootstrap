@@ -300,7 +300,6 @@
                 $sliderImages = [
                     ['key' => 'home_slider_image_1', 'label' => 'Imagem do Slider 1'],
                     ['key' => 'home_slider_image_2', 'label' => 'Imagem do Slider 2'],
-                    ['key' => 'home_slider_image_3', 'label' => 'Imagem do Slider 3'],
                 ];
             @endphp
             
