@@ -152,7 +152,7 @@ class RastreamentoController extends Controller
         // Registrar auditoria de consulta
         AuditService::logRastreamento($denuncia, $request->ip(), $request->userAgent());
 
-        return view('rastreamento.resultado-publico', compact('denuncia'));
+        return view('rastreamento.publico-resultado', compact('denuncia'));
     }
 
     /**
