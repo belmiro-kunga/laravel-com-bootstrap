@@ -156,6 +156,26 @@ class RastreamentoController extends Controller
     }
 
     /**
+     * Exibe o resultado do rastreamento público de denúncias por protocolo
+     */
+    public function publicoResultado($protocolo)
+    {
+        $denuncia = Denuncia::where('protocolo', $protocolo)
+            ->with(['categoria', 'status', 'comentarios' => function($query) {
+                $query->where('publico', true)
+                      ->orWhere('tipo', 'mensagem')
+                      ->with(['user', 'replies' => function($q) {
+                          $q->where('publico', true);
+                      }]);
+            }, 'evidencias' => function($query) {
+                $query->where('publico', true);
+            }])
+            ->firstOrFail();
+
+        return view('rastreamento.publico-resultado', compact('denuncia'));
+    }
+
+    /**
      * Gera um PDF com os detalhes da denúncia (público)
      */
     public function downloadPDF($protocolo)

@@ -34,6 +34,7 @@ class DenunciaController extends Controller
             'titulo' => 'required|string|max:255',
             'descricao' => 'required|string',
             'categoria_id' => 'required|exists:categorias,id',
+            'prioridade' => 'required|in:baixa,media,alta,critica',
             'nome_denunciante' => 'nullable|string|max:255',
             'email_denunciante' => 'nullable|email|max:255',
             'telefone_denunciante' => 'nullable|string|max:20',
@@ -45,17 +46,14 @@ class DenunciaController extends Controller
         try {
             DB::beginTransaction();
 
-            // Gerar protocolo único
-            $protocolo = 'DEN-' . strtoupper(Str::random(8));
-            
-            // Criar a denúncia
+            // Criar a denúncia (protocolo temporário)
             $denuncia = new Denuncia([
                 'titulo' => $request->titulo,
                 'descricao' => $request->descricao,
                 'categoria_id' => $request->categoria_id,
                 'status_id' => 1, // Status inicial (Aberto)
-                'prioridade' => 'media',
-                'protocolo' => $protocolo,
+                'prioridade' => $request->prioridade,
+                'protocolo' => '', // será atualizado após salvar
                 'nome_denunciante' => $request->nome_denunciante,
                 'email_denunciante' => $request->email_denunciante,
                 'telefone_denunciante' => $request->telefone_denunciante,
@@ -65,11 +63,12 @@ class DenunciaController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            // Se o usuário estiver autenticado, associar a ele
-            if (Auth::check()) {
-                $denuncia->user_id = Auth::id();
-            }
+            $denuncia->save();
 
+            // Gerar protocolo no formato AAAA-MM-DD-XXXXXX
+            $data = $denuncia->created_at ?? now();
+            $protocolo = $data->format('Y-m-d') . '-' . str_pad($denuncia->id, 6, '0', STR_PAD_LEFT);
+            $denuncia->protocolo = $protocolo;
             $denuncia->save();
 
             // Processar anexos
@@ -88,16 +87,14 @@ class DenunciaController extends Controller
             }
 
             // Registrar auditoria
-            AuditService::logDenunciaCriada($denuncia, 'Denúncia criada através do formulário público');
+            AuditService::logCreated($denuncia, 'Denúncia criada através do formulário público');
 
             // Notificar administradores
             NotificationService::notificarNovaDenuncia($denuncia);
 
             DB::commit();
 
-            return redirect()->route('rastreamento.publico')
-                ->with('success', 'Sua denúncia foi registrada com sucesso! Use o número de protocolo para acompanhar: ' . $protocolo)
-                ->with('protocolo', $protocolo);
+            return redirect()->route('rastreamento.publico.resultado', ['protocolo' => $protocolo]);
 
         } catch (\Exception $e) {
             DB::rollBack();

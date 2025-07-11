@@ -101,6 +101,7 @@ Route::post('/denuncia', [DenunciaController::class, 'salvarPublica'])->name('de
 Route::get('/rastreamento-publico', [RastreamentoController::class, 'publico'])->name('rastreamento.publico');
 Route::get('/rastreamento-publico/buscar', [RastreamentoController::class, 'publicoBuscar'])->name('rastreamento.publico.buscar');
 Route::get('/rastreamento-publico/{protocolo}/download', [RastreamentoController::class, 'downloadPDF'])->name('rastreamento.publico.download');
+Route::get('/rastreamento-publico/{protocolo}/resultado', [RastreamentoController::class, 'publicoResultado'])->name('rastreamento.publico.resultado');
 // Nova rota para resposta pública
 Route::post('/rastreamento-publico/{protocolo}/mensagem/{comentario}/responder', [ComentarioController::class, 'responderMensagemPublica'])->name('rastreamento.publico.responder');
 
