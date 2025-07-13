@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('categorias', function (Blueprint $table) {
+        Schema::table('status', function (Blueprint $table) {
             $table->softDeletes();
         });
     }
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('categorias', function (Blueprint $table) {
+        Schema::table('status', function (Blueprint $table) {
             // Removido dropSoftDeletes para evitar erro caso a coluna não exista
         });
     }
-};
+}; 

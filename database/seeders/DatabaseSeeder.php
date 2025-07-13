@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             PublicPermissionsSeeder::class,
             AdminUserSeeder::class,
-            // Outros seeders podem ser adicionados aqui
+            CategoriaSeeder::class,
+            StatusSeeder::class,
         ]);
     }
 }
