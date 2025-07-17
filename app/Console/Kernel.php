@@ -41,6 +41,18 @@ class Kernel extends ConsoleKernel
                 ->dailyAt('04:00')
                 ->withoutOverlapping()
                 ->emailOutputOnFailure(env('ADMIN_EMAIL'));
+                
+        // Reconstrução do cache a cada 6 horas
+        $schedule->command('cache:rebuild')
+                ->everySixHours()
+                ->withoutOverlapping()
+                ->runInBackground();
+                
+        // Otimização de imagens diária
+        $schedule->command('images:optimize')
+                ->dailyAt('02:30')
+                ->withoutOverlapping()
+                ->runInBackground();
     }
 
     /**

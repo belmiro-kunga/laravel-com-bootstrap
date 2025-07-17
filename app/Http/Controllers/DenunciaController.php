@@ -148,7 +148,25 @@ class DenunciaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Denuncia::with(['categoria', 'status', 'responsavel']);
+        // Usar cache para filtros que não mudam frequentemente
+        $categorias = Cache::remember('categorias_ativas', now()->addHours(6), function() {
+            return Categoria::ativas()->ordenadas()->get();
+        });
+        
+        $status = Cache::remember('status_ativos', now()->addHours(6), function() {
+            return Status::ativos()->ordenados()->get();
+        });
+        
+        $responsaveis = Cache::remember('usuarios_responsaveis', now()->addHours(6), function() {
+            return User::responsaveis()->ativos()->get();
+        });
+        
+        // Construir a query com eager loading otimizado
+        $query = Denuncia::with([
+            'categoria:id,nome,cor', // Selecionar apenas os campos necessários
+            'status:id,nome,cor',
+            'responsavel:id,name,email'
+        ]);
 
         // Filtros
         if ($request->filled('status')) {
@@ -211,12 +229,8 @@ class DenunciaController extends Controller
         $direcao = $request->get('direcao', 'desc');
         $query->orderBy($ordenacao, $direcao);
 
-        $denuncias = $query->paginate(15);
-
-        // Dados para filtros
-        $categorias = Categoria::ativas()->ordenadas()->get();
-        $status = Status::ativos()->ordenados()->get();
-        $responsaveis = User::responsaveis()->ativos()->get();
+        // Usar paginação eficiente
+        $denuncias = $query->paginate(15)->withQueryString();
 
         return view('denuncias.index', compact('denuncias', 'categorias', 'status', 'responsaveis'));
     }
@@ -226,9 +240,18 @@ class DenunciaController extends Controller
      */
     public function create()
     {
-        $categorias = Categoria::ativas()->ordenadas()->get();
-        $status = Status::ativos()->ordenados()->get();
-        $responsaveis = User::responsaveis()->ativos()->get();
+        // Usar cache para dados que não mudam frequentemente
+        $categorias = Cache::remember('categorias_ativas', now()->addHours(6), function() {
+            return Categoria::ativas()->ordenadas()->get();
+        });
+        
+        $status = Cache::remember('status_ativos', now()->addHours(6), function() {
+            return Status::ativos()->ordenados()->get();
+        });
+        
+        $responsaveis = Cache::remember('usuarios_responsaveis', now()->addHours(6), function() {
+            return User::responsaveis()->ativos()->get();
+        });
 
         return view('denuncias.create', compact('categorias', 'status', 'responsaveis'));
     }
@@ -320,10 +343,32 @@ class DenunciaController extends Controller
             abort(403, 'Acesso negado.');
         }
 
-        $denuncia->load(['categoria', 'status', 'responsavel', 'evidencias', 'comentarios.user']);
+        // Otimizar eager loading para evitar consultas N+1
+        $denuncia->load([
+            'categoria:id,nome,cor,ativo',
+            'status:id,nome,cor,ativo',
+            'responsavel:id,name,email,role',
+            'evidencias',
+            'comentarios' => function($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'comentarios.user:id,name,email,role',
+            'historicoStatus' => function($query) {
+                $query->orderBy('created_at', 'desc')->limit(10);
+            },
+            'historicoStatus.statusAnterior:id,nome,cor',
+            'historicoStatus.statusNovo:id,nome,cor',
+            'historicoStatus.user:id,name'
+        ]);
 
-        $statusDisponiveis = Status::ativos()->ordenados()->get();
-        $responsaveis = User::responsaveis()->ativos()->get();
+        // Usar cache para dados que não mudam frequentemente
+        $statusDisponiveis = Cache::remember('status_ativos', now()->addHours(6), function() {
+            return Status::ativos()->ordenados()->get();
+        });
+        
+        $responsaveis = Cache::remember('usuarios_responsaveis', now()->addHours(6), function() {
+            return User::responsaveis()->ativos()->get();
+        });
 
         return view('denuncias.show', compact('denuncia', 'statusDisponiveis', 'responsaveis'));
     }
@@ -343,10 +388,25 @@ class DenunciaController extends Controller
                            ->with('error', 'Esta denúncia não pode ser editada.');
         }
 
-        $denuncia->load(['categoria', 'status', 'responsavel']);
-        $categorias = Categoria::ativas()->ordenadas()->get();
-        $status = Status::ativos()->ordenados()->get();
-        $responsaveis = User::responsaveis()->ativos()->get();
+        // Otimizar eager loading para evitar consultas N+1
+        $denuncia->load([
+            'categoria:id,nome,cor,ativo',
+            'status:id,nome,cor,ativo',
+            'responsavel:id,name,email,role'
+        ]);
+        
+        // Usar cache para dados que não mudam frequentemente
+        $categorias = Cache::remember('categorias_ativas', now()->addHours(6), function() {
+            return Categoria::ativas()->ordenadas()->get();
+        });
+        
+        $status = Cache::remember('status_ativos', now()->addHours(6), function() {
+            return Status::ativos()->ordenados()->get();
+        });
+        
+        $responsaveis = Cache::remember('usuarios_responsaveis', now()->addHours(6), function() {
+            return User::responsaveis()->ativos()->get();
+        });
 
         return view('denuncias.edit', compact('denuncia', 'categorias', 'status', 'responsaveis'));
     }

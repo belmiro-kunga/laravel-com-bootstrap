@@ -3,108 +3,147 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CacheService
 {
     /**
      * Tempo padrão de cache em minutos
      */
-    protected $defaultTtl = 60;
-    
+    protected static $defaultTtl = 60;
+
     /**
-     * Prefixo para as chaves de cache
+     * Obter dados do cache ou do banco de dados
+     *
+     * @param string $key Chave do cache
+     * @param \Closure $callback Função para obter os dados do banco de dados
+     * @param int|null $ttl Tempo de vida do cache em minutos
+     * @return mixed
      */
-    protected $prefix = 'app_cache_';
-    
-    /**
-     * Obter ou armazenar um valor em cache
-     */
-    public function remember($key, $callback, $ttl = null)
+    public static function remember($key, \Closure $callback, $ttl = null)
     {
-        $ttl = $ttl ?: $this->defaultTtl;
-        $cacheKey = $this->prefix . $key;
+        $ttl = $ttl ?? self::$defaultTtl;
         
-        return Cache::remember($cacheKey, $ttl * 60, $callback);
+        try {
+            return Cache::remember($key, now()->addMinutes($ttl), $callback);
+        } catch (\Exception $e) {
+            Log::error('Erro ao acessar cache: ' . $e->getMessage());
+            // Em caso de erro no cache, executar a consulta diretamente
+            return $callback();
+        }
     }
-    
+
     /**
-     * Obter ou armazenar um valor em cache por um dia
+     * Limpar cache específico
+     *
+     * @param string $key Chave do cache
+     * @return bool
      */
-    public function rememberDay($key, $callback)
+    public static function forget($key)
     {
-        return $this->remember($key, $callback, 60 * 24);
+        try {
+            return Cache::forget($key);
+        } catch (\Exception $e) {
+            Log::error('Erro ao limpar cache: ' . $e->getMessage());
+            return false;
+        }
     }
-    
+
     /**
-     * Obter ou armazenar um valor em cache por uma hora
+     * Limpar todos os caches relacionados a denúncias
+     *
+     * @return bool
      */
-    public function rememberHour($key, $callback)
-    {
-        return $this->remember($key, $callback, 60);
-    }
-    
-    /**
-     * Obter ou armazenar um valor em cache por 5 minutos
-     */
-    public function rememberShort($key, $callback)
-    {
-        return $this->remember($key, $callback, 5);
-    }
-    
-    /**
-     * Limpar um item específico do cache
-     */
-    public function forget($key)
-    {
-        $cacheKey = $this->prefix . $key;
-        return Cache::forget($cacheKey);
-    }
-    
-    /**
-     * Limpar todos os itens de cache relacionados ao dashboard
-     */
-    public function flushDashboard()
+    public static function flushDenunciasCache()
     {
         $keys = [
-            'dashboard_main_metrics',
             'dashboard_denuncias_por_status',
             'dashboard_denuncias_por_categoria',
-            'dashboard_tempo_medio_resolucao',
-            'dashboard_denuncias_recentes',
-            'dashboard_denuncias_urgentes',
-            'dashboard_atividades_recentes',
+            'dashboard_denuncias_por_periodo_30',
+            'dashboard_denuncias_recentes_5',
+            'dashboard_denuncias_urgentes_5',
+            'dashboard_main_metrics',
+            'dashboard_tempo_medio_resolucao'
+        ];
+        
+        foreach ($keys as $key) {
+            self::forget($key);
+        }
+        
+        return true;
+    }
+
+    /**
+     * Limpar todos os caches relacionados a usuários
+     *
+     * @return bool
+     */
+    public static function flushUsersCache()
+    {
+        $keys = [
+            'usuarios_responsaveis',
             'dashboard_estatisticas_responsavel'
         ];
         
         foreach ($keys as $key) {
-            $this->forget($key);
+            self::forget($key);
         }
         
         return true;
     }
-    
+
     /**
-     * Limpar todos os itens de cache relacionados às denúncias
+     * Limpar todos os caches relacionados a categorias
+     *
+     * @return bool
      */
-    public function flushDenuncias()
+    public static function flushCategoriasCache()
     {
         $keys = [
-            'denuncias_count',
-            'denuncias_pendentes_count',
-            'denuncias_urgentes_count',
-            'denuncias_resolvidas_count',
-            'dashboard_denuncias_por_status',
-            'dashboard_denuncias_por_categoria',
-            'dashboard_tempo_medio_resolucao',
-            'dashboard_denuncias_recentes',
-            'dashboard_denuncias_urgentes'
+            'categorias_ativas',
+            'dashboard_denuncias_por_categoria'
         ];
         
         foreach ($keys as $key) {
-            $this->forget($key);
+            self::forget($key);
         }
         
         return true;
+    }
+
+    /**
+     * Limpar todos os caches relacionados a status
+     *
+     * @return bool
+     */
+    public static function flushStatusCache()
+    {
+        $keys = [
+            'status_ativos',
+            'dashboard_denuncias_por_status'
+        ];
+        
+        foreach ($keys as $key) {
+            self::forget($key);
+        }
+        
+        return true;
+    }
+
+    /**
+     * Limpar todos os caches do sistema
+     *
+     * @return bool
+     */
+    public static function flushAllCache()
+    {
+        try {
+            Cache::flush();
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Erro ao limpar todo o cache: ' . $e->getMessage());
+            return false;
+        }
     }
 }

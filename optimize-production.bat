@@ -1,0 +1,23 @@
+@echo off
+echo Otimizando aplicacao para ambiente de producao...
+
+echo 1. Limpando cache...
+php artisan cache:clear
+
+echo 2. Otimizando autoloader do Composer...
+composer dump-autoload --optimize --no-dev
+
+echo 3. Cacheando configuracoes...
+php artisan config:cache
+
+echo 4. Cacheando rotas...
+php artisan route:cache
+
+echo 5. Cacheando views...
+php artisan view:cache
+
+echo 6. Compilando assets...
+npm run build
+
+echo Otimizacao concluida com sucesso!
+pause
