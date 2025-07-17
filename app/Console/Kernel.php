@@ -23,6 +23,24 @@ class Kernel extends ConsoleKernel
                 ->weekly()
                 ->sundays()
                 ->at('02:00');
+                
+        // Backup diário do banco de dados às 3h da manhã
+        $schedule->command('backup:database')
+                ->dailyAt('03:00')
+                ->withoutOverlapping()
+                ->runInBackground()
+                ->onSuccess(function () {
+                    \Log::channel('security')->info('Backup agendado concluído com sucesso');
+                })
+                ->onFailure(function () {
+                    \Log::channel('security')->error('Falha no backup agendado');
+                });
+                
+        // Verificação de segurança diária
+        $schedule->command('security:check')
+                ->dailyAt('04:00')
+                ->withoutOverlapping()
+                ->emailOutputOnFailure(env('ADMIN_EMAIL'));
     }
 
     /**

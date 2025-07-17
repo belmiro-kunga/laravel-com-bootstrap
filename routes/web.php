@@ -29,8 +29,13 @@ use App\Http\Controllers\EmailConfigController;
 |
 */
 
-// Middleware de manutenção para todas as rotas
-Route::middleware(['maintenance'])->group(function () {
+// Rotas do Wizard de Instalação (devem vir antes do middleware de manutenção)
+if (!file_exists(storage_path('installed'))) {
+    require __DIR__.'/install.php';
+}
+
+// Rotas principais (apenas middleware web básico)
+Route::middleware(['web'])->group(function () {
     
     // Rota pública para denúncias
     Route::get('/', [WelcomeController::class, 'index'])->name('home')->middleware('no-cache');
@@ -38,38 +43,9 @@ Route::middleware(['maintenance'])->group(function () {
 
 
 // Rotas de autenticação
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::post('/login', function () {
-    $credentials = request()->only('email', 'password');
-    if (Auth::attempt($credentials)) {
-        request()->session()->regenerate();
-        // Log de auditoria de login
-        AuditService::logLogin(Auth::user());
-        return redirect()->intended(route('dashboard.index'));
-    }
-    return back()->withErrors([
-        'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
-    ]);
-})->name('login.post');
-
-Route::post('/logout', function () {
-    $user = Auth::user();
-    // Log de auditoria de logout
-    if ($user) {
-        AuditService::logLogout($user);
-    }
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    $redirectTo = request('redirect_to');
-    if ($redirectTo) {
-        return redirect($redirectTo);
-    }
-    return redirect()->route('home');
-})->name('logout');
+Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->middleware('throttle.logins:5,1')->name('login.post');
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 Route::get('/register', function () {
     return view('auth.register');
@@ -93,17 +69,24 @@ Route::post('/register', function () {
     return redirect()->route('dashboard.index');
 })->name('register.post');
 
-// Rotas públicas para denúncias anônimas
-Route::get('/denuncia', [DenunciaController::class, 'formularioPublico'])->name('denuncias.formulario-publico');
-Route::post('/denuncia', [DenunciaController::class, 'salvarPublica'])->name('denuncias.salvar-publica');
+// Rotas públicas para denúncias anônimas - com rate limiting
+Route::middleware(['throttle:10,1'])->group(function () {
+    Route::get('/denuncia', [DenunciaController::class, 'formularioPublico'])->name('denuncias.formulario-publico');
+});
 
-// Rotas públicas para rastreamento
-Route::get('/rastreamento-publico', [RastreamentoController::class, 'publico'])->name('rastreamento.publico');
-Route::get('/rastreamento-publico/buscar', [RastreamentoController::class, 'publicoBuscar'])->name('rastreamento.publico.buscar');
-Route::get('/rastreamento-publico/{protocolo}/download', [RastreamentoController::class, 'downloadPDF'])->name('rastreamento.publico.download');
-Route::get('/rastreamento-publico/{protocolo}/resultado', [RastreamentoController::class, 'publicoResultado'])->name('rastreamento.publico.resultado');
-// Nova rota para resposta pública
-Route::post('/rastreamento-publico/{protocolo}/mensagem/{comentario}/responder', [ComentarioController::class, 'responderMensagemPublica'])->name('rastreamento.publico.responder');
+// Rotas públicas com proteção mais rigorosa contra abuso
+Route::middleware(['throttle:5,1'])->group(function () {
+    Route::post('/denuncia', [DenunciaController::class, 'salvarPublica'])->name('denuncias.salvar-publica');
+    Route::post('/rastreamento-publico/{protocolo}/mensagem/{comentario}/responder', [ComentarioController::class, 'responderMensagemPublica'])->name('rastreamento.publico.responder');
+});
+
+// Rotas públicas para rastreamento - com rate limiting moderado
+Route::middleware(['throttle:15,1'])->group(function () {
+    Route::get('/rastreamento-publico', [RastreamentoController::class, 'publico'])->name('rastreamento.publico');
+    Route::get('/rastreamento-publico/buscar', [RastreamentoController::class, 'publicoBuscar'])->name('rastreamento.publico.buscar');
+    Route::get('/rastreamento-publico/{protocolo}/download', [RastreamentoController::class, 'downloadPDF'])->name('rastreamento.publico.download');
+    Route::get('/rastreamento-publico/{protocolo}/resultado', [RastreamentoController::class, 'publicoResultado'])->name('rastreamento.publico.resultado');
+});
 
 // Rotas protegidas por autenticação
 Route::middleware(['auth'])->group(function () {

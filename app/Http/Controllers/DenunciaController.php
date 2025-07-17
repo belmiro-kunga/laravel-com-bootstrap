@@ -40,7 +40,25 @@ class DenunciaController extends Controller
             'telefone_denunciante' => 'nullable|string|max:20',
             'local_ocorrencia' => 'required|string|max:500',
             'data_ocorrencia' => 'required|date',
-            'evidencias.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
+            'evidencias' => 'nullable|array|max:5', // Limitar a 5 arquivos
+            'evidencias.*' => [
+                'nullable',
+                'file',
+                'max:10240', // 10MB
+                'mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
+                function ($attribute, $value, $fail) {
+                    // Verificação adicional de segurança
+                    if ($value && $value->getClientOriginalExtension() !== $value->extension()) {
+                        $fail('O tipo de arquivo não corresponde à extensão.');
+                    }
+                    
+                    // Verificar nome de arquivo seguro
+                    $filename = $value->getClientOriginalName();
+                    if (preg_match('/[<>:"\/\\|?*]/', $filename)) {
+                        $fail('O nome do arquivo contém caracteres não permitidos.');
+                    }
+                },
+            ],
         ]);
 
         try {
@@ -71,17 +89,28 @@ class DenunciaController extends Controller
             $denuncia->protocolo = $protocolo;
             $denuncia->save();
 
-            // Processar anexos
+            // Processar anexos com segurança adicional
             if ($request->hasFile('evidencias')) {
                 foreach ($request->file('evidencias') as $file) {
-                    $path = $file->store('evidencias', 'public');
+                    // Gerar nome de arquivo seguro
+                    $extension = $file->getClientOriginalExtension();
+                    $safeFilename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '_' . time() . '_' . Str::random(8) . '.' . $extension;
                     
+                    // Armazenar com nome seguro
+                    $path = $file->storeAs('evidencias', $safeFilename, 'public');
+                    
+                    // Verificar tipo MIME real do arquivo
+                    $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                    $realMimeType = $finfo->file($file->getRealPath());
+                    
+                    // Registrar evidência com informações de segurança
                     $denuncia->evidencias()->create([
                         'nome_arquivo' => $file->getClientOriginalName(),
                         'caminho_arquivo' => $path,
-                        'tipo_mime' => $file->getClientMimeType(),
+                        'tipo_mime' => $realMimeType, // Usar tipo MIME real verificado
                         'tamanho' => $file->getSize(),
                         'publico' => false,
+                        'hash_arquivo' => hash_file('sha256', $file->getRealPath()), // Adicionar hash para verificação de integridade
                     ]);
                 }
             }
@@ -98,8 +127,16 @@ class DenunciaController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Erro ao salvar denúncia pública: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
+            
+            // Log detalhado no canal de denúncias
+            \Log::channel('denuncias')->error('Erro ao salvar denúncia pública', [
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'dados' => $request->except(['evidencias']), // Não logar arquivos
+                'timestamp' => now()->toIso8601String()
+            ]);
             
             return back()->withInput()->withErrors([
                 'error' => 'Ocorreu um erro ao processar sua denúncia. Por favor, tente novamente mais tarde.'

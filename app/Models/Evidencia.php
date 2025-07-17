@@ -19,8 +19,10 @@ class Evidencia extends Model
         'nome_original',
         'nome_arquivo',
         'caminho',
+        'caminho_arquivo',
         'tipo_mime',
         'tamanho',
+        'hash_arquivo',
         'extensao',
         'descricao',
         'publico'

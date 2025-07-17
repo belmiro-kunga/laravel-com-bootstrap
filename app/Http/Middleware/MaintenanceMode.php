@@ -16,26 +16,36 @@ class MaintenanceMode
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Verificar se o sistema está em modo de manutenção
-        if (ConfigHelper::isMaintenanceMode()) {
-            // Permitir acesso a administradores
-            if (auth()->check() && auth()->user()->hasPermission('system-config.menu')) {
-                return $next($request);
-            }
+        // Permitir acesso ao wizard de instalação sempre
+        if ($request->is('install*')) {
+            return $next($request);
+        }
 
-            // Retornar página de manutenção
-            $message = ConfigHelper::getMaintenanceMessage();
-            
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'error' => 'Sistema em manutenção',
+        try {
+            // Verificar se o sistema está em modo de manutenção
+            if (ConfigHelper::isMaintenanceMode()) {
+                // Permitir acesso a administradores
+                if (auth()->check() && auth()->user()->hasPermission('system-config.menu')) {
+                    return $next($request);
+                }
+
+                // Retornar página de manutenção
+                $message = ConfigHelper::getMaintenanceMessage();
+                
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'error' => 'Sistema em manutenção',
+                        'message' => $message
+                    ], 503);
+                }
+
+                return response()->view('maintenance', [
                     'message' => $message
                 ], 503);
             }
-
-            return response()->view('maintenance', [
-                'message' => $message
-            ], 503);
+        } catch (\Exception $e) {
+            // Em caso de erro (ex: banco não configurado), permitir acesso
+            \Log::error('MaintenanceMode middleware error: ' . $e->getMessage());
         }
 
         return $next($request);

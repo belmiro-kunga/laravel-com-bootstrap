@@ -54,7 +54,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['daily', 'security', 'denuncias'],
             'ignore_exceptions' => false,
         ],
 
@@ -125,6 +125,22 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+        
+        'security' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/security.log'),
+            'level' => 'notice',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+        
+        'denuncias' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/denuncias.log'),
+            'level' => 'info',
+            'days' => 30,
+            'replace_placeholders' => true,
         ],
     ],
 

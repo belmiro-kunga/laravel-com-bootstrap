@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\SecurityHeaders::class,
     ];
 
     /**
@@ -68,5 +69,7 @@ class Kernel extends HttpKernel
         'maintenance' => \App\Http\Middleware\MaintenanceMode::class,
         'no-cache' => \App\Http\Middleware\NoCache::class,
         'public.access' => \App\Http\Middleware\CheckPublicAccess::class,
+        'check.installation' => \App\Http\Middleware\CheckInstallation::class,
+        'throttle.logins' => \App\Http\Middleware\ThrottleLogins::class,
     ];
 }

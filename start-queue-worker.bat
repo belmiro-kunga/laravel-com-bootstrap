@@ -1,0 +1,3 @@
+@echo off
+echo Iniciando worker de filas do Laravel...
+php artisan queue:work --queue=audit,default --tries=3 --timeout=60

@@ -87,9 +87,38 @@ class AuditService
      */
     public static function logLogin($user, $description = null)
     {
+        // Dispatch job para processar o log de forma assíncrona
+        \App\Jobs\LogLoginJob::dispatch(
+            $user->id,
+            request()->ip(),
+            request()->userAgent()
+        )->onQueue('audit');
+        
+        return true;
+    }
+    
+    /**
+     * Log para login (versão assíncrona chamada pelo job)
+     */
+    public static function logLoginAsync($user, $ipAddress, $userAgent, $description = null)
+    {
         $description = $description ?? "Login realizado por {$user->name}";
         
-        return self::log('login', $description, $user);
+        return AuditLog::create([
+            'event' => 'login',
+            'auditable_type' => get_class($user),
+            'auditable_id' => $user->id,
+            'user_id' => $user->id,
+            'user_type' => $user->role,
+            'ip_address' => $ipAddress,
+            'user_agent' => $userAgent,
+            'old_values' => null,
+            'new_values' => null,
+            'description' => $description,
+            'url' => 'login',
+            'method' => 'POST',
+            'metadata' => []
+        ]);
     }
 
     /**
@@ -97,9 +126,38 @@ class AuditService
      */
     public static function logLogout($user, $description = null)
     {
+        // Dispatch job para processar o log de forma assíncrona
+        \App\Jobs\LogLogoutJob::dispatch(
+            $user->id,
+            request()->ip(),
+            request()->userAgent()
+        )->onQueue('audit');
+        
+        return true;
+    }
+    
+    /**
+     * Log para logout (versão assíncrona chamada pelo job)
+     */
+    public static function logLogoutAsync($user, $ipAddress, $userAgent, $description = null)
+    {
         $description = $description ?? "Logout realizado por {$user->name}";
         
-        return self::log('logout', $description, $user);
+        return AuditLog::create([
+            'event' => 'logout',
+            'auditable_type' => get_class($user),
+            'auditable_id' => $user->id,
+            'user_id' => $user->id,
+            'user_type' => $user->role,
+            'ip_address' => $ipAddress,
+            'user_agent' => $userAgent,
+            'old_values' => null,
+            'new_values' => null,
+            'description' => $description,
+            'url' => 'logout',
+            'method' => 'POST',
+            'metadata' => []
+        ]);
     }
 
     /**
